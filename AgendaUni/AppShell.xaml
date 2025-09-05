@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="AgendaUni.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:AgendaUni.Views"
+    Shell.FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray600}}"
+    Title="AgendaUni">
+
+    <ShellContent
+        Title="Calendário"
+        ContentTemplate="{DataTemplate local:MainPage}"
+        Route="MainPage" />
+
+    <ShellContent
+        Title="Aulas"
+        ContentTemplate="{DataTemplate local:ClassPage}" />
+
+    <ShellContent
+        Title="Horários"
+        ContentTemplate="{DataTemplate local:ClassSchedulePage}" />
+
+    <ShellContent
+        Title="Faltas"
+        ContentTemplate="{DataTemplate local:AbsencePage}" />
+
+    <ShellContent
+        Title="Eventos"
+        ContentTemplate="{DataTemplate local:EventPage}" />
+
+</Shell>

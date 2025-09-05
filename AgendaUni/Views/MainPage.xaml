@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Plugin.Maui.Calendar.Controls;assembly=Plugin.Maui.Calendar"
+             xmlns:converters="clr-namespace:AgendaUni.Common.Converters"
+             x:Class="AgendaUni.Views.MainPage">
+
+    <ContentPage.Resources>
+        <converters:EventsColorConverter x:Key="EventsColorConverter" />
+        <Style x:Key="MonthStyle" TargetType="Label">
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+            <Setter Property="VerticalOptions" Value="Center" />
+        </Style>
+        <Style x:Key="WeekendTitleStyle" TargetType="Label">
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+            <Setter Property="VerticalOptions" Value="Center" />
+        </Style>
+        <Style x:Key="NextMonthArrowButtonStyle" TargetType="Button">
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+            <Setter Property="VerticalOptions" Value="Center" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="Text" Value="→" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="WidthRequest" Value="40" />
+            <Setter Property="HeightRequest" Value="40" />
+            <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            <Setter Property="BorderWidth" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+        </Style>
+        <Style x:Key="PreviousMonthArrowButtonStyle" TargetType="Button">
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+            <Setter Property="VerticalOptions" Value="Center" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="Text" Value="←" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="WidthRequest" Value="40" />
+            <Setter Property="HeightRequest" Value="40" />
+            <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            <Setter Property="BorderWidth" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+        </Style>
+        <Style x:Key="SelectedDayStyle" TargetType="Label">
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="HorizontalOptions" Value="Start" />
+            <Setter Property="VerticalOptions" Value="Center" />
+        </Style>
+        <Style x:Key="DaysLabelStyle" TargetType="Label">
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style x:Key="DayButtonStyle" TargetType="Button">
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="BackgroundColor" Value="#6B7280" />
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+    </ContentPage.Resources>
+    
+    <VerticalStackLayout Padding="20" Spacing="15">
+        <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Center" AlignItems="Center" Margin="0,0,0,10">
+            <Button Text="Tudo" Style="{StaticResource DayButtonStyle}"
+                BackgroundColor="{Binding ShowAllSelected, Converter={StaticResource BoolToColorConverter}}"
+                Command="{Binding FilterCalendarCommand}" CommandParameter="All" Margin="5"/>
+            <Button Text="Eventos" Style="{StaticResource DayButtonStyle}"
+                BackgroundColor="{Binding ShowEventsSelected, Converter={StaticResource BoolToColorConverter}}"
+                Command="{Binding FilterCalendarCommand}" CommandParameter="Events" Margin="5"/>
+            <Button Text="Aulas" Style="{StaticResource DayButtonStyle}"
+                BackgroundColor="{Binding ShowClassesSelected, Converter={StaticResource BoolToColorConverter}}"
+                Command="{Binding FilterCalendarCommand}" CommandParameter="Classes" Margin="5"/>
+            <Button Text="Faltas" Style="{StaticResource DayButtonStyle}"
+                BackgroundColor="{Binding ShowAbsencesSelected, Converter={StaticResource BoolToColorConverter}}"
+                Command="{Binding FilterCalendarCommand}" CommandParameter="Absences" Margin="5"/>
+        </FlexLayout>
+        
+        <controls:Calendar
+            Culture="{Binding Culture}"
+            TodayOutlineColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}"
+            EventIndicatorColor="Black"
+            EventIndicatorSelectedColor ="#1F2937"
+            SelectedDayBackgroundColor="#E5E7EB"
+            ShowYearPicker="False"
+            SelectedDateLabelStyle="{StaticResource SelectedDayStyle}"
+            MonthLabelStyle="{StaticResource MonthStyle}"
+            WeekendTitleStyle="{StaticResource WeekendTitleStyle}"
+            DaysTitleLabelStyle="{StaticResource WeekendTitleStyle}"
+            NextMonthArrowButtonStyle="{StaticResource NextMonthArrowButtonStyle}"
+            PreviousMonthArrowButtonStyle="{StaticResource PreviousMonthArrowButtonStyle}"
+            DaysLabelStyle="{StaticResource DaysLabelStyle}"
+            Events="{Binding Events}" EventsScrollViewVisible="True">
+
+            <controls:Calendar.EventTemplate>
+                <DataTemplate>
+                    <StackLayout Padding="15,0,0,0">
+                        <Label
+                            Text="{Binding Name}"
+                            FontAttributes="Bold"
+                            FontSize="Medium"
+                            TextColor="{Binding Type, Converter={StaticResource EventsColorConverter}}" />
+                        <Label
+                            Text="{Binding Description}"
+                            FontSize="Small"
+                            LineBreakMode="WordWrap"
+                            TextColor="{Binding Type, Converter={StaticResource EventsColorConverter}}" />
+                    </StackLayout>
+                </DataTemplate>
+            </controls:Calendar.EventTemplate>
+        </controls:Calendar>
+    </VerticalStackLayout>
+</ContentPage>

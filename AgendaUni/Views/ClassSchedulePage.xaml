@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AgendaUni.Views.ClassSchedulePage"
+             Title="">
+    <ContentPage.Resources>
+        <Style x:Key="DayButtonStyle" TargetType="Button">
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="BackgroundColor" Value="#6B7280" />
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+    </ContentPage.Resources>
+    
+    <VerticalStackLayout Padding="20" Spacing="15">
+
+        <Label Text="Cadastrar Horários"
+                   FontSize="24"
+                   HorizontalOptions="Center"/>
+
+        <VerticalStackLayout>
+            <Label Text="Aula"
+               FontAttributes="Bold"
+               FontSize="14"
+               Margin="0,5,0,2" />
+            <Picker Title="Selecione a Aula"
+                ItemsSource="{Binding Classes}"
+                ItemDisplayBinding="{Binding ClassName}"
+                SelectedItem="{Binding SelectedClass}" />
+        </VerticalStackLayout>
+
+
+        <VerticalStackLayout>
+            <Label Text="Horário" 
+           FontAttributes="Bold"
+           FontSize="14"
+           Margin="0,5,0,2"/>
+            
+        <TimePicker Format="HH:mm"
+                    Time="{Binding ClassTime}" />
+        </VerticalStackLayout>
+
+        <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Center" AlignItems="Center">
+            <Button Text="Seg" Style="{StaticResource DayButtonStyle}"
+            BackgroundColor="{Binding MondaySelected, Converter={StaticResource BoolToColorConverter}}"
+            Command="{Binding ToggleDayCommand}" CommandParameter="Monday" Margin="5"/>
+            <Button Text="Ter" Style="{StaticResource DayButtonStyle}"
+            BackgroundColor="{Binding TuesdaySelected, Converter={StaticResource BoolToColorConverter}}"
+            Command="{Binding ToggleDayCommand}" CommandParameter="Tuesday" Margin="5"/>
+            <Button Text="Qua" Style="{StaticResource DayButtonStyle}"
+            BackgroundColor="{Binding WednesdaySelected, Converter={StaticResource BoolToColorConverter}}"
+            Command="{Binding ToggleDayCommand}" CommandParameter="Wednesday" Margin="5"/>
+            <Button Text="Qui" Style="{StaticResource DayButtonStyle}"
+            BackgroundColor="{Binding ThursdaySelected, Converter={StaticResource BoolToColorConverter}}"
+            Command="{Binding ToggleDayCommand}" CommandParameter="Thursday" Margin="5"/>
+            <Button Text="Sex" Style="{StaticResource DayButtonStyle}"
+            BackgroundColor="{Binding FridaySelected, Converter={StaticResource BoolToColorConverter}}"
+            Command="{Binding ToggleDayCommand}" CommandParameter="Friday" Margin="5"/>
+        </FlexLayout>
+
+        <Button Text="Registrar Horários"
+                    Command="{Binding RegisterClassScheduleCommand}" />
+    </VerticalStackLayout>
+</ContentPage>

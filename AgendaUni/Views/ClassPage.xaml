@@ -1,0 +1,37 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AgendaUni.Views.ClassPage"
+             Title="">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+
+        <Label Text="Registrar Aula"
+               FontSize="24"
+               HorizontalOptions="Center" />
+
+        <VerticalStackLayout>
+            <Label Text="Nome"
+               FontAttributes="Bold"
+               FontSize="14"
+               Margin="0,5,0,2" />
+            <Entry Placeholder="Digite o nome da aula"
+               Text="{Binding NewClass.ClassName}" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout>
+            <Label Text="Máximo de Faltas"
+               FontAttributes="Bold"
+               FontSize="14"
+               Margin="0,5,0,2" />
+            <Entry Placeholder="Ex: 3"
+               Keyboard="Numeric"
+               IsTextPredictionEnabled="False"
+               IsSpellCheckEnabled="False"
+               Text="{Binding NewClass.MaximumAbsences}" />
+        </VerticalStackLayout>
+
+        <Button Text="Registrar Aula"
+                    Command="{Binding RegisterClassCommand}" />
+
+    </VerticalStackLayout>
+</ContentPage>

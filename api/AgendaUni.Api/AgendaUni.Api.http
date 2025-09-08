@@ -1,0 +1,6 @@
+@AgendaUni.Api_HostAddress = http://localhost:5232
+
+GET {{AgendaUni.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

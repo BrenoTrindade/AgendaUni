@@ -198,6 +198,34 @@ AutoTest.Net/
 # DocProject is a documentation generator add-in
 DocProject/buildhelp/
 DocProject/Help/*.HxT
+
+# Docker
+*.dockerignore
+
+# SQL Server
+*.mdf
+*.ldf
+
+# Node.js
+node_modules/
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Visual Studio Code
+.vscode/
+
+# Other
+*.bak
+*.tmp
+
 DocProject/Help/*.HxC
 DocProject/Help/*.hhc
 DocProject/Help/*.hhk
@@ -436,3 +464,32 @@ FodyWeavers.xsd
 
 # Ignorar a pasta apk
 apk/
+
+# Other
+*.bak
+*.tmp
+
+# Docker
+*.dockerignore
+
+# SQL Server
+*.mdf
+*.ldf
+
+# Node.js
+node_modules/
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Visual Studio Code
+.vscode/
+
+api/AgendaUni.Api/Migrations/

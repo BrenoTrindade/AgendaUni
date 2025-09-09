@@ -1,6 +1,125 @@
-@AgendaUni.Api_HostAddress = http://localhost:5232
-
-GET {{AgendaUni.Api_HostAddress}}/weatherforecast/
+@AgendaUni.Api_HostAddress = http://localhost:8080
 Accept: application/json
 
-###
+### GET - listar todas as classes
+GET {{AgendaUni.Api_HostAddress}}/api/Class
+Accept: application/json
+
+### GET - obter uma classe específica (id = 1)
+GET {{AgendaUni.Api_HostAddress}}/api/Class/1
+Accept: application/json
+
+### POST - criar uma nova classe
+POST {{AgendaUni.Api_HostAddress}}/api/Class
+Content-Type: application/json
+
+{
+  "ClassName": "Matematica",
+  "MaximumAbsences": "5"
+}
+
+### PUT - atualizar uma classe existente (id = 1)
+PUT {{AgendaUni.Api_HostAddress}}/api/Class/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "ClassName": "Matemática Avançada",
+  "MaximumAbsences": "4"
+}
+
+### DELETE - remover uma classe (id = 1)
+
+### GET - listar todas as ausências
+GET {{AgendaUni.Api_HostAddress}}/api/Absence
+Accept: application/json
+
+### GET - obter uma ausência específica (id = 1)
+GET {{AgendaUni.Api_HostAddress}}/api/Absence/1
+Accept: application/json
+
+### POST - criar uma nova ausência
+POST {{AgendaUni.Api_HostAddress}}/api/Absence
+Content-Type: application/json
+
+{
+  "AbsenceDate": "2023-10-27T10:00:00",
+  "AbsenceReason": "Doença",
+  "ClassId": 2
+}
+
+### PUT - atualizar uma ausência existente (id = 1)
+PUT {{AgendaUni.Api_HostAddress}}/api/Absence/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "AbsenceDate": "2023-10-27T11:00:00",
+  "AbsenceReason": "Compromisso médico",
+  "ClassId": 1
+}
+
+### DELETE - remover uma ausência (id = 1)
+
+### GET - listar todos os horários de aula
+GET {{AgendaUni.Api_HostAddress}}/api/ClassSchedule
+Accept: application/json
+
+### GET - obter um horário de aula específico (id = 1)
+GET {{AgendaUni.Api_HostAddress}}/api/ClassSchedule/1
+Accept: application/json
+
+### POST - criar um novo horário de aula
+POST {{AgendaUni.Api_HostAddress}}/api/ClassSchedule
+Content-Type: application/json
+
+{
+  "DayOfWeek": 1,
+  "ClassTime": "10:00:00",
+  "ClassId": 2
+}
+
+### PUT - atualizar um horário de aula existente (id = 1)
+PUT {{AgendaUni.Api_HostAddress}}/api/ClassSchedule/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "DayOfWeek": 2,
+  "ClassTime": "11:00:00",
+  "ClassId": 2
+}
+
+### DELETE - remover um horário de aula (id = 1)
+
+### GET - listar todos os eventos
+GET {{AgendaUni.Api_HostAddress}}/api/Event
+Accept: application/json
+
+### GET - obter um evento específico (id = 1)
+GET {{AgendaUni.Api_HostAddress}}/api/Event/1
+Accept: application/json
+
+### POST - criar um novo evento
+POST {{AgendaUni.Api_HostAddress}}/api/Event
+Content-Type: application/json
+
+{
+  "EventDate": "2023-10-27T10:00:00",
+  "Description": "Reunião de pais",
+  "ClassId": 2
+}
+
+### PUT - atualizar um evento existente (id = 1)
+PUT {{AgendaUni.Api_HostAddress}}/api/Event/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "EventDate": "2023-10-27T11:00:00",
+  "Description": "Reunião de professores",
+  "ClassId": 2
+}
+
+### DELETE - remover um evento (id = 1)
+DELETE {{AgendaUni.Api_HostAddress}}/api/Event/1

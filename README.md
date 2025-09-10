@@ -44,8 +44,16 @@ cd AgendaUni
 ### Restaure as dependências
 dotnet restore
 
+### Acesse a pasta da API e crie a migração inicial
+
+dotnet ef migrations add InitialCreate
+
+### Aplicar a migração ao banco de dados:
+dotnet ef database update
+
 ### Execute no emulador ou dispositivo
 dotnet build
+
 dotnet run
 
 # 📦 Publicação

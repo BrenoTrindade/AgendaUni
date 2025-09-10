@@ -43,5 +43,10 @@ namespace AgendaUni.Api.Repositories
         {
             _context.Set<T>().Update(entity);
         }
+
+        public async Task Save()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

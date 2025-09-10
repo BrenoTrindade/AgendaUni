@@ -10,5 +10,6 @@ namespace AgendaUni.Api.Interfaces
         void Update(T entity);
         void Delete(T entity);
         Task<IEnumerable<T>> Find(Expression<Func<T, bool>> expression);
+        Task Save();
     }
 }

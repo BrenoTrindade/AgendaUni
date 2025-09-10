@@ -13,6 +13,7 @@ namespace AgendaUni.Api.Data
         public DbSet<Class> Classes { get; set; }
         public DbSet<ClassSchedule> ClassSchedules { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

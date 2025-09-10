@@ -16,6 +16,7 @@ namespace AgendaUni.Api.Services
         public async Task AddAbsence(Absence absence)
         {
             await _absenceRepository.Add(absence);
+            await _absenceRepository.Save();
         }
 
         public async Task DeleteAbsence(int id)
@@ -24,6 +25,7 @@ namespace AgendaUni.Api.Services
             if (absence != null)
             {
                 _absenceRepository.Delete(absence);
+                await _absenceRepository.Save();
             }
         }
 

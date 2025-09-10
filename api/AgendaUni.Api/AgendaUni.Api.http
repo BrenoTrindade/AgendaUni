@@ -6,7 +6,7 @@ GET {{AgendaUni.Api_HostAddress}}/api/Class
 Accept: application/json
 
 ### GET - obter uma classe específica (id = 1)
-GET {{AgendaUni.Api_HostAddress}}/api/Class/1
+GET {{AgendaUni.Api_HostAddress}}/api/Class/2
 Accept: application/json
 
 ### POST - criar uma nova classe
@@ -14,7 +14,7 @@ POST {{AgendaUni.Api_HostAddress}}/api/Class
 Content-Type: application/json
 
 {
-  "ClassName": "Matematica",
+  "ClassName": "math1",
   "MaximumAbsences": "5"
 }
 
@@ -123,3 +123,26 @@ Content-Type: application/json
 
 ### DELETE - remover um evento (id = 1)
 DELETE {{AgendaUni.Api_HostAddress}}/api/Event/1
+
+### Register User
+POST {{AgendaUni.Api_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "BrenoTrindade",
+  "email": "Breno@gmail.com",
+  "password": "YourStrongPassword@1"
+}
+
+### Login User
+POST {{AgendaUni.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "BrenoTrindade",
+  "password": "YourStrongPassword@1"
+}
+
+### Get User by ID
+GET {{AgendaUni.Api_HostAddress}}/api/auth/user/{id}
+Content-Type: application/json

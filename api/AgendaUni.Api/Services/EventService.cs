@@ -16,6 +16,7 @@ namespace AgendaUni.Api.Services
         public async Task AddEvent(Event @event)
         {
             await _eventRepository.Add(@event);
+            await _eventRepository.Save();
         }
 
         public async Task DeleteEvent(int id)
@@ -24,6 +25,7 @@ namespace AgendaUni.Api.Services
             if (@event != null)
             {
                 _eventRepository.Delete(@event);
+                await _eventRepository.Save();
             }
         }
 

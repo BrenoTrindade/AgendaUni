@@ -20,12 +20,14 @@ builder.Services.AddScoped<IAbsenceRepository, AbsenceRepository>();
 builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<IClassScheduleRepository, ClassScheduleRepository>();
 builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Register services
 builder.Services.AddScoped<IAbsenceService, AbsenceService>();
 builder.Services.AddScoped<IClassService, ClassService>();
 builder.Services.AddScoped<IClassScheduleService, ClassScheduleService>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>

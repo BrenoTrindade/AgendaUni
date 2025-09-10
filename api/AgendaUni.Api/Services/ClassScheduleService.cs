@@ -16,6 +16,7 @@ namespace AgendaUni.Api.Services
         public async Task AddClassSchedule(ClassSchedule classSchedule)
         {
             await _classScheduleRepository.Add(classSchedule);
+            await _classScheduleRepository.Save();
         }
 
         public async Task DeleteClassSchedule(int id)
@@ -24,6 +25,7 @@ namespace AgendaUni.Api.Services
             if (classSchedule != null)
             {
                 _classScheduleRepository.Delete(classSchedule);
+                await _classScheduleRepository.Save();
             }
         }
 

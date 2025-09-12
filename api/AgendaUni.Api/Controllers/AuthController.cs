@@ -1,5 +1,6 @@
 using AgendaUni.Api.Models.DTOs;
 using AgendaUni.Api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgendaUni.Api.Controllers
@@ -52,6 +53,7 @@ namespace AgendaUni.Api.Controllers
         }
 
         [HttpGet("user/{id}")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetUser(string id)
         {
             var user = await _authService.GetUserByIdAsync(id);

@@ -9,10 +9,12 @@ namespace AgendaUni.Api.Services
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ITokenService _tokenService;
 
-        public AuthService(IUserRepository userRepository)
+        public AuthService(IUserRepository userRepository, ITokenService tokenService)
         {
             _userRepository = userRepository;
+            _tokenService = tokenService;
         }
 
         public async Task<(bool Success, string Message, AuthResponseDTO? User)> RegisterAsync(RegisterDTO registerDto)
@@ -42,8 +44,11 @@ namespace AgendaUni.Api.Services
             await _userRepository.Add(user);
             await _userRepository.Save();
 
+            // Gerar token JWT
+            var token = _tokenService.GenerateToken(user);
+
             // Retornar resposta de sucesso
-            return (true, "Usuário registrado com sucesso", MapToAuthResponse(user));
+            return (true, "Usuário registrado com sucesso", MapToAuthResponse(user, token));
         }
 
         public async Task<(bool Success, string Message, AuthResponseDTO? User)> LoginAsync(LoginDTO loginDto)
@@ -68,8 +73,11 @@ namespace AgendaUni.Api.Services
             _userRepository.Update(user);
             await _userRepository.Save();
 
+            // Gerar token JWT
+            var token = _tokenService.GenerateToken(user);
+
             // Retornar resposta de sucesso
-            return (true, "Login realizado com sucesso", MapToAuthResponse(user));
+            return (true, "Login realizado com sucesso", MapToAuthResponse(user, token));
         }
 
         public async Task<User?> GetUserByIdAsync(string id)
@@ -79,7 +87,7 @@ namespace AgendaUni.Api.Services
         }
 
         // Método para mapear User para AuthResponseDTO
-        private static AuthResponseDTO MapToAuthResponse(User user)
+        private static AuthResponseDTO MapToAuthResponse(User user, string token)
         {
             return new AuthResponseDTO
             {
@@ -87,7 +95,9 @@ namespace AgendaUni.Api.Services
                 Username = user.Username,
                 Email = user.Email,
                 CreatedAt = user.CreatedAt,
-                LastLogin = user.LastLogin
+                LastLogin = user.LastLogin,
+                Token = token,
+                Role = user.Role.ToString()
             };
         }
 

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using AgendaUni.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using AgendaUni.Api.Services.Interfaces;
@@ -6,6 +7,7 @@ namespace AgendaUni.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "User, Admin")]
     public class ClassController : ControllerBase
     {
         private readonly IClassService _classService;

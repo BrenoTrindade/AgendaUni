@@ -143,6 +143,22 @@ Content-Type: application/json
   "password": "YourStrongPassword@1"
 }
 
+### Get User by ID with JWT
+GET {{AgendaUni.Api_HostAddress}}/api/auth/user/1
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
 ### Get User by ID
-GET {{AgendaUni.Api_HostAddress}}/api/auth/user/{id}
+GET https://localhost:7262/api/auth/user/{id}
 Content-Type: application/json
+
+
+### Register User
+POST https://localhost:7262/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "BrenoTrindade",
+  "email": "Breno@gmail.com",
+  "password": "YourStrongPassword@1"
+}

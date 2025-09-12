@@ -1,3 +1,4 @@
+using AgendaUni.Api.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -29,5 +30,8 @@ namespace AgendaUni.Api.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime? LastLogin { get; set; }
+
+        [Required]
+        public UserRole Role { get; set; } = UserRole.User;
     }
 }

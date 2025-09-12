@@ -15,8 +15,17 @@ namespace AgendaUni.Api.Services
 
         public async Task AddClass(Class @class)
         {
-            await _classRepository.Add(@class);
-            await _classRepository.Save();
+            try
+            {
+
+                await _classRepository.Add(@class);
+                await _classRepository.Save();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task DeleteClass(int id)

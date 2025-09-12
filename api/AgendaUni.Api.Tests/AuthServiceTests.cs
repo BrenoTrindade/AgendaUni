@@ -2,6 +2,7 @@ using AgendaUni.Api.Interfaces;
 using AgendaUni.Api.Models;
 using AgendaUni.Api.Models.DTOs;
 using AgendaUni.Api.Services;
+using AgendaUni.Api.Services.Interfaces;
 using Moq;
 using System.Linq.Expressions;
 using Xunit;
@@ -11,12 +12,14 @@ namespace AgendaUni.Api.Tests
     public class AuthServiceTests
     {
         private readonly Mock<IUserRepository> _mockUserRepository;
+        private readonly Mock<ITokenService> _mockTokenService;
         private readonly AuthService _authService;
 
         public AuthServiceTests()
         {
             _mockUserRepository = new Mock<IUserRepository>();
-            _authService = new AuthService(_mockUserRepository.Object);
+            _mockTokenService = new Mock<ITokenService>();
+            _authService = new AuthService(_mockUserRepository.Object, _mockTokenService.Object);
         }
 
         [Fact]
@@ -124,6 +127,9 @@ namespace AgendaUni.Api.Tests
             _mockUserRepository.Setup(repo => repo.Update(It.IsAny<User>()))
                 .Verifiable();
 
+            _mockTokenService.Setup(s => s.GenerateToken(It.IsAny<User>()))
+                .Returns("dummy_token");
+
             // Act
             var result = await _authService.LoginAsync(loginDto);
 
@@ -134,7 +140,9 @@ namespace AgendaUni.Api.Tests
             Assert.Equal(user.Id, result.User.Id);
             Assert.Equal(user.Username, result.User.Username);
             Assert.Equal(user.Email, result.User.Email);
+            Assert.Equal("dummy_token", result.User.Token);
             _mockUserRepository.Verify(repo => repo.Update(It.IsAny<User>()), Times.Once);
+            _mockTokenService.Verify(s => s.GenerateToken(It.IsAny<User>()), Times.Once);
         }
 
         [Fact]

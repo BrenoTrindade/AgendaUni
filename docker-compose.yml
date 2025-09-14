@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   agendauni.api:
     build:
@@ -13,6 +11,15 @@ services:
       - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=AgendaUniDb;User Id=SA;Password=YourStrong@Password;Encrypt=False;
     depends_on:
       - sqlserver
+
+  agendauni.web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+      - agendauni.api
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest

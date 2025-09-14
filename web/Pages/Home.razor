@@ -1,7 +1,90 @@
-﻿@page "/"
+@page "/"
+@using AgendaUni.Web.Services
+@using AgendaUni.Web.Models
+@using BlazorCalendar.Models
+@inject EventService EventService
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="d-flex flex-wrap justify-content-center align-items-center mb-3">
+    <button class="btn btn-secondary m-1 @(ShowAllSelected ? "active" : "")"
+            @onclick="@(() => FilterCalendar("All"))">
+        Tudo
+    </button>
 
-Welcome to your new app.
+    <button class="btn btn-secondary m-1 @(ShowEventsSelected ? "active" : "")"
+            @onclick="@(() => FilterCalendar("Events"))">
+        Eventos
+    </button>
+
+    <button class="btn btn-secondary m-1 @(ShowClassesSelected ? "active" : "")"
+            @onclick="@(() => FilterCalendar("Classes"))">
+        Aulas
+    </button>
+
+    <button class="btn btn-secondary m-1 @(ShowAbsencesSelected ? "active" : "")"
+            @onclick="@(() => FilterCalendar("Absences"))">
+        Faltas
+    </button>
+
+</div>
+
+<CalendarContainer DisplayedView="DisplayedView.Monthly" TasksList="BlazorCalendarTasksList.ToArray()">
+    <MonthlyView />
+</CalendarContainer>
+
+@code {
+    private bool ShowAllSelected { get; set; } = true;
+    private bool ShowEventsSelected { get; set; } = false;
+    private bool ShowClassesSelected { get; set; } = false;
+    private bool ShowAbsencesSelected { get; set; } = false;
+
+    private List<BlazorCalendar.Models.Tasks> BlazorCalendarTasksList = new List<BlazorCalendar.Models.Tasks>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEvents();
+    }
+
+    private async Task LoadEvents()
+    {
+        var events = await EventService.GetEvents();
+        if (events != null)
+        {
+            BlazorCalendarTasksList = events.Select(e => new BlazorCalendar.Models.Tasks
+            {
+                ID = e.Id,
+                DateStart = e.StartDate,
+                DateEnd = e.EndDate,
+                Caption = e.Title,
+                Comment = e.Description,
+                Code = "EV", // You might want to define a code for events
+                Color = "#FF5733" // Example color for events
+            }).ToList();
+        }
+    }
+
+    private void FilterCalendar(string filterType)
+    {
+        ShowAllSelected = false;
+        ShowEventsSelected = false;
+        ShowClassesSelected = false;
+        ShowAbsencesSelected = false;
+
+        switch (filterType)
+        {
+            case "All":
+                ShowAllSelected = true;
+                break;
+            case "Events":
+                ShowEventsSelected = true;
+                break;
+            case "Classes":
+                ShowClassesSelected = true;
+                break;
+            case "Absences":
+                ShowAbsencesSelected = true;
+                break;
+        }
+    }
+}

@@ -1,0 +1,54 @@
+@page "/login"
+@inject AgendaUni.Web.Services.AuthService AuthService
+@inject NavigationManager NavigationManager
+@using System.ComponentModel.DataAnnotations
+@using AgendaUni.Web.Models
+
+<h3>Login</h3>
+
+<div class="login-container">
+    <div class="login-card">
+        <EditForm Model="@loginModel" OnValidSubmit="@HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="username">Usuário:</label>
+                <InputText id="username" class="form-control" @bind-Value="@loginModel.Username" />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha:</label>
+                <InputText id="password" type="password" class="form-control" @bind-Value="@loginModel.Password" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Entrar</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var success = await AuthService.Login(loginModel);
+            if (success)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                // Handle login failure (e.g., display error message)
+                Console.WriteLine("Login failed");
+            }
+        }
+        catch (Exception ee)
+        {
+            
+            throw;
+        }
+    }
+}

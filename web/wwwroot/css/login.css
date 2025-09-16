@@ -1,0 +1,65 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f2f5; /* Um cinza claro para o fundo */
+}
+
+.login-card {
+    background-color: #ffffff; /* Branco para o cartão de login */
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-card h3 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333333; /* Um cinza escuro para o título */
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555555; /* Um cinza médio para os rótulos */
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cccccc; /* Um cinza para a borda do input */
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 10px;
+    background-color: #6c757d; /* Um cinza mais escuro para o botão */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-primary:hover {
+    background-color: #5a6268; /* Um cinza ainda mais escuro no hover */
+}
+
+.validation-summary-errors {
+    color: #dc3545; /* Vermelho para mensagens de erro */
+    margin-bottom: 15px;
+}
+
+.validation-message {
+    color: #dc3545;
+    font-size: 0.875em;
+}

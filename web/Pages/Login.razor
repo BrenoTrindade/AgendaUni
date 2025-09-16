@@ -3,6 +3,7 @@
 @inject NavigationManager NavigationManager
 @using System.ComponentModel.DataAnnotations
 @using AgendaUni.Web.Models
+@using System.Web
 
 <h3>Login</h3>
 
@@ -37,7 +38,16 @@
             var success = await AuthService.Login(loginModel);
             if (success)
             {
-                NavigationManager.NavigateTo("/");
+                var returnUrl = NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query;
+                if (returnUrl.Contains("returnUrl="))
+                {
+                    returnUrl = System.Web.HttpUtility.ParseQueryString(returnUrl).Get("returnUrl");
+                    NavigationManager.NavigateTo(returnUrl);
+                }
+                else
+                {
+                    NavigationManager.NavigateTo("/");
+                }
             }
             else
             {

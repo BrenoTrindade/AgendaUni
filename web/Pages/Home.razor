@@ -1,7 +1,9 @@
 @page "/"
+@attribute [Authorize]
 @using AgendaUni.Web.Services
 @using AgendaUni.Web.Models
 @using BlazorCalendar.Models
+@using Microsoft.AspNetCore.Authorization
 @inject EventService EventService
 
 <PageTitle>Home</PageTitle>

@@ -1,3 +1,7 @@
+@using AgendaUni.Web.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AgendaUni.Web.Services.AuthService AuthService
+
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">AgendaUni</a>
@@ -11,9 +15,30 @@
     <nav class="nav flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Calend·rio
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Calend√°rio
             </NavLink>
         </div>
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="profile">
+                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <button class="nav-link btn btn-link" @onclick="Logout">
+                        <span class="bi bi-box-arrow-right" aria-hidden="true"></span> Logout
+                    </button>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="login">
+                        <span class="bi bi-box-arrow-in-right" aria-hidden="true"></span> Login
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
     </nav>
 </div>
 
@@ -25,5 +50,10 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    private async Task Logout()
+    {
+        await AuthService.Logout();
     }
 }

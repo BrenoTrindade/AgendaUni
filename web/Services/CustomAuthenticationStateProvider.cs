@@ -86,6 +86,13 @@ namespace AgendaUni.Web.Services
                 keyValuePairs.Remove(ClaimTypes.Role);
             }
 
+            // Add ClaimTypes.Name if available in the JWT payload
+            if (keyValuePairs.TryGetValue("unique_name", out object uniqueName) && uniqueName != null)
+            {
+                claims.Add(new Claim(ClaimTypes.Name, uniqueName.ToString()));
+                keyValuePairs.Remove("unique_name");
+            }
+
             claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString())));
             return claims;
         }

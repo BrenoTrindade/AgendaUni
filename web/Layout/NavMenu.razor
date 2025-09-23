@@ -1,6 +1,4 @@
 @using AgendaUni.Web.Services
-@using Microsoft.AspNetCore.Components.Authorization
-@inject AgendaUni.Web.Services.AuthService AuthService
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -19,15 +17,6 @@
             </NavLink>
         </div>
     </nav>
-    <AuthorizeView>
-        <Authorized>
-            <div class="nav-item px-3 mb-3">
-                <button class="nav-link btn btn-link" @onclick="Logout">
-                    <span class="bi bi-box-arrow-right" aria-hidden="true"></span> Logout
-                </button>
-            </div>
-        </Authorized>
-    </AuthorizeView>
 </div>
 
 @code {
@@ -38,10 +27,5 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
-    }
-
-    private async Task Logout()
-    {
-        await AuthService.Logout();
     }
 }

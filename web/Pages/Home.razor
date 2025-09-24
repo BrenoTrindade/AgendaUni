@@ -56,9 +56,9 @@
             BlazorCalendarTasksList = events.Select(e => new BlazorCalendar.Models.Tasks
             {
                 ID = e.Id,
-                DateStart = e.StartDate,
-                DateEnd = e.EndDate,
-                Caption = e.Title,
+                DateStart = e.EventDate,
+                DateEnd = e.EventDate,
+                Caption = e.Description,
                 Comment = e.Description,
                 Code = "EV", // You might want to define a code for events
                 Color = "#FF5733" // Example color for events

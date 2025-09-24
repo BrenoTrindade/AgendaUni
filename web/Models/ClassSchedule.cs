@@ -3,17 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AgendaUni.Web.Models
 {
-    public class Event
+    public class ClassSchedule
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
-        public DateTime EventDate { get; set; }
+        public DayOfWeek DayOfWeek { get; set; }
 
         [Required]
-        [StringLength(200)]
-        public string Description { get; set; }
+        public TimeSpan ClassTime { get; set; }
 
         [ForeignKey("Class")]
         public int ClassId { get; set; }

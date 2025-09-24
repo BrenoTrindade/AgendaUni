@@ -20,8 +20,10 @@ builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
-builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<EventService>(sp => new EventService(sp.GetRequiredService<HttpClient>(), sp.GetRequiredService<ILocalStorageService>()));
+builder.Services.AddScoped<ClassService>(sp => new ClassService(sp.GetRequiredService<HttpClient>(), sp.GetRequiredService<ILocalStorageService>()));
+builder.Services.AddScoped<AbsenceService>(sp => new AbsenceService(sp.GetRequiredService<HttpClient>(), sp.GetRequiredService<ILocalStorageService>()));
 
 
 await builder.Build().RunAsync();

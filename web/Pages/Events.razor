@@ -1,0 +1,59 @@
+@page "/events"
+@using AgendaUni.Web.Models
+@using AgendaUni.Web.Services
+@inject EventService EventService
+@inject NavigationManager NavigationManager
+
+<h3>Events</h3>
+
+@if (events == null) {
+    <p><em>Loading...</em></p>
+} else {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var eventItem in events) {
+                <tr>
+                    <td>@eventItem.Title</td>
+                    <td>@eventItem.Description</td>
+                    <td>@eventItem.StartDate.ToShortDateString()</td>
+                    <td>@eventItem.EndDate.ToShortDateString()</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => EditEvent(eventItem.Id))">Edit</button>
+                        <button class="btn btn-danger" @onclick="(() => DeleteEvent(eventItem.Id))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-success" @onclick="CreateEvent">Add New Event</button>
+}
+
+@code {
+    private List<Event> events;
+
+    protected override async Task OnInitializedAsync() {
+        events = (await EventService.GetEvents()).ToList();
+    }
+
+    private void CreateEvent() {
+        NavigationManager.NavigateTo("/event-details");
+    }
+
+    private void EditEvent(int id) {
+        NavigationManager.NavigateTo($"/event-details/{id}");
+    }
+
+    private async Task DeleteEvent(int id) {
+        await EventService.DeleteEvent(id);
+        events = (await EventService.GetEvents()).ToList();
+    }
+}

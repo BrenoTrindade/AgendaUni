@@ -50,20 +50,20 @@
 
     private async Task LoadEvents()
     {
-        // var events = await EventService.GetEvents();
-        // if (events != null)
-        // {
-        //     BlazorCalendarTasksList = events.Select(e => new BlazorCalendar.Models.Tasks
-        //     {
-        //         ID = e.Id,
-        //         DateStart = e.StartDate,
-        //         DateEnd = e.EndDate,
-        //         Caption = e.Title,
-        //         Comment = e.Description,
-        //         Code = "EV", // You might want to define a code for events
-        //         Color = "#FF5733" // Example color for events
-        //     }).ToList();
-        // }
+        var events = await EventService.GetEvents();
+        if (events != null)
+        {
+            BlazorCalendarTasksList = events.Select(e => new BlazorCalendar.Models.Tasks
+            {
+                ID = e.Id,
+                DateStart = e.StartDate,
+                DateEnd = e.EndDate,
+                Caption = e.Title,
+                Comment = e.Description,
+                Code = "EV", // You might want to define a code for events
+                Color = "#FF5733" // Example color for events
+            }).ToList();
+        }
     }
 
     private void FilterCalendar(string filterType)

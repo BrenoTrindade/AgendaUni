@@ -7,12 +7,12 @@ using Blazored.LocalStorage;
 
 namespace AgendaUni.Web.Services
 {
-    public class EventService
+    public class AbsenceService
     {
         private readonly HttpClient _httpClient;
         private readonly ILocalStorageService _localStorage;
 
-        public EventService(HttpClient httpClient, ILocalStorageService localStorage)
+        public AbsenceService(HttpClient httpClient, ILocalStorageService localStorage)
         {
             _httpClient = httpClient;
             _localStorage = localStorage;
@@ -27,33 +27,34 @@ namespace AgendaUni.Web.Services
             }
         }
 
-        public async Task<List<Event>?> GetEvents()
+        public async Task<IEnumerable<Absence>> GetAllAbsences()
         {
             await AddJwtHeader();
-            return await _httpClient.GetFromJsonAsync<List<Event>>("api/Event");
-        }
-        public async Task<Event> GetEventById(int id)
-        {
-            await AddJwtHeader();
-            return await _httpClient.GetFromJsonAsync<Event>($"api/Event/{id}");
+            return await _httpClient.GetFromJsonAsync<IEnumerable<Absence>>("api/absence");
         }
 
-        public async Task AddEvent(Event newEvent)
+        public async Task<Absence> GetAbsenceById(int id)
         {
             await AddJwtHeader();
-            await _httpClient.PostAsJsonAsync("api/Event", newEvent);
+            return await _httpClient.GetFromJsonAsync<Absence>($"api/absence/{id}");
         }
 
-        public async Task UpdateEvent(Event updatedEvent)
+        public async Task AddAbsence(Absence absence)
         {
             await AddJwtHeader();
-            await _httpClient.PutAsJsonAsync($"api/Event/{updatedEvent.Id}", updatedEvent);
+            await _httpClient.PostAsJsonAsync("api/absence", absence);
         }
 
-        public async Task DeleteEvent(int id)
+        public async Task UpdateAbsence(Absence absence)
         {
             await AddJwtHeader();
-            await _httpClient.DeleteAsync($"api/Event/{id}");
+            await _httpClient.PutAsJsonAsync($"api/absence/{@absence.Id}", absence);
+        }
+
+        public async Task DeleteAbsence(int id)
+        {
+            await AddJwtHeader();
+            await _httpClient.DeleteAsync($"api/absence/{id}");
         }
     }
 }

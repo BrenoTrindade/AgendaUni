@@ -7,12 +7,12 @@ using Blazored.LocalStorage;
 
 namespace AgendaUni.Web.Services
 {
-    public class EventService
+    public class ClassService
     {
         private readonly HttpClient _httpClient;
         private readonly ILocalStorageService _localStorage;
 
-        public EventService(HttpClient httpClient, ILocalStorageService localStorage)
+        public ClassService(HttpClient httpClient, ILocalStorageService localStorage)
         {
             _httpClient = httpClient;
             _localStorage = localStorage;
@@ -27,33 +27,34 @@ namespace AgendaUni.Web.Services
             }
         }
 
-        public async Task<List<Event>?> GetEvents()
+        public async Task<IEnumerable<Class>> GetAllClasses()
         {
             await AddJwtHeader();
-            return await _httpClient.GetFromJsonAsync<List<Event>>("api/Event");
-        }
-        public async Task<Event> GetEventById(int id)
-        {
-            await AddJwtHeader();
-            return await _httpClient.GetFromJsonAsync<Event>($"api/Event/{id}");
+            return await _httpClient.GetFromJsonAsync<IEnumerable<Class>>("api/class");
         }
 
-        public async Task AddEvent(Event newEvent)
+        public async Task<Class> GetClassById(int id)
         {
             await AddJwtHeader();
-            await _httpClient.PostAsJsonAsync("api/Event", newEvent);
+            return await _httpClient.GetFromJsonAsync<Class>($"api/class/{id}");
         }
 
-        public async Task UpdateEvent(Event updatedEvent)
+        public async Task AddClass(Class @class)
         {
             await AddJwtHeader();
-            await _httpClient.PutAsJsonAsync($"api/Event/{updatedEvent.Id}", updatedEvent);
+            await _httpClient.PostAsJsonAsync("api/class", @class);
         }
 
-        public async Task DeleteEvent(int id)
+        public async Task UpdateClass(Class @class)
         {
             await AddJwtHeader();
-            await _httpClient.DeleteAsync($"api/Event/{id}");
+            await _httpClient.PutAsJsonAsync($"api/class/{@class.Id}", @class);
+        }
+
+        public async Task DeleteClass(int id)
+        {
+            await AddJwtHeader();
+            await _httpClient.DeleteAsync($"api/class/{id}");
         }
     }
 }

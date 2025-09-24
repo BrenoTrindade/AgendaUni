@@ -1,0 +1,69 @@
+@page "/absence-details"
+@page "/absence-details/{id}"
+@using AgendaUni.Web.Models
+@using AgendaUni.Web.Services
+@inject AbsenceService AbsenceService
+@inject ClassService ClassService
+@inject NavigationManager NavigationManager
+
+<h3>@Title Absence</h3>
+
+<EditForm Model="@absence" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="absenceDate">Absence Date:</label>
+        <InputDate id="absenceDate" class="form-control" @bind-Value="@absence.AbsenceDate" />
+    </div>
+    <div class="form-group">
+        <label for="absenceReason">Absence Reason:</label>
+        <InputText id="absenceReason" class="form-control" @bind-Value="@absence.AbsenceReason" />
+    </div>
+    <div class="form-group">
+        <label for="classId">Class:</label>
+        <InputSelect id="classId" class="form-control" @bind-Value="@absence.ClassId">
+            @if (classes != null)
+            {
+                @foreach (var classItem in classes)
+                {
+                    <option value="@classItem.Id">@classItem.ClassName</option>
+                }
+            }
+        </InputSelect>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Absence absence = new Absence();
+    private List<Class> classes;
+    private string Title = "Create";
+
+    protected override async Task OnInitializedAsync() {
+        classes = (await ClassService.GetAllClasses()).ToList();
+
+        if (Id != 0) {
+            Title = "Edit";
+            absence = await AbsenceService.GetAbsenceById(Id);
+        }
+    }
+
+    private async Task HandleSubmit() {
+        if (Id != 0) {
+            await AbsenceService.UpdateAbsence(absence);
+        } else {
+            await AbsenceService.AddAbsence(absence);
+        }
+        NavigationManager.NavigateTo("/absences");
+    }
+
+    private void Cancel() {
+        NavigationManager.NavigateTo("/absences");
+    }
+}

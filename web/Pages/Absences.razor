@@ -1,0 +1,57 @@
+@page "/absences"
+@using AgendaUni.Web.Models
+@using AgendaUni.Web.Services
+@inject AbsenceService AbsenceService
+@inject NavigationManager NavigationManager
+
+<h3>Absences</h3>
+
+@if (absences == null) {
+    <p><em>Loading...</em></p>
+} else {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Absence Date</th>
+                <th>Absence Reason</th>
+                <th>Class ID</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var absenceItem in absences) {
+                <tr>
+                    <td>@absenceItem.AbsenceDate.ToShortDateString()</td>
+                    <td>@absenceItem.AbsenceReason</td>
+                    <td>@absenceItem.ClassId</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => EditAbsence(absenceItem.Id))">Edit</button>
+                        <button class="btn btn-danger" @onclick="(() => DeleteAbsence(absenceItem.Id))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-success" @onclick="CreateAbsence">Add New Absence</button>
+}
+
+@code {
+    private List<Absence> absences;
+
+    protected override async Task OnInitializedAsync() {
+        absences = (await AbsenceService.GetAllAbsences()).ToList();
+    }
+
+    private void CreateAbsence() {
+        NavigationManager.NavigateTo("/absence-details");
+    }
+
+    private void EditAbsence(int id) {
+        NavigationManager.NavigateTo($"/absence-details/{id}");
+    }
+
+    private async Task DeleteAbsence(int id) {
+        await AbsenceService.DeleteAbsence(id);
+        absences = (await AbsenceService.GetAllAbsences()).ToList();
+    }
+}

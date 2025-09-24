@@ -32,6 +32,11 @@ namespace AgendaUni.Web.Services
             await AddJwtHeader();
             return await _httpClient.GetFromJsonAsync<List<Event>>("api/Event");
         }
+        public async Task<Event> GetEventById(int id)
+        {
+            await AddJwtHeader();
+            return await _httpClient.GetFromJsonAsync<Event>($"api/Event/{id}");
+        }
 
         public async Task AddEvent(Event newEvent)
         {

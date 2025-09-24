@@ -1,0 +1,55 @@
+@page "/classes"
+@using AgendaUni.Web.Models
+@using AgendaUni.Web.Services
+@inject ClassService ClassService
+@inject NavigationManager NavigationManager
+
+<h3>Classes</h3>
+
+@if (classes == null) {
+    <p><em>Loading...</em></p>
+} else {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Class Name</th>
+                <th>Maximum Absences</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var classItem in classes) {
+                <tr>
+                    <td>@classItem.ClassName</td>
+                    <td>@classItem.MaximumAbsences</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => EditClass(classItem.Id))">Edit</button>
+                        <button class="btn btn-danger" @onclick="(() => DeleteClass(classItem.Id))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-success" @onclick="CreateClass">Add New Class</button>
+}
+
+@code {
+    private List<Class> classes;
+
+    protected override async Task OnInitializedAsync() {
+        classes = (await ClassService.GetAllClasses()).ToList();
+    }
+
+    private void CreateClass() {
+        NavigationManager.NavigateTo("/class-details");
+    }
+
+    private void EditClass(int id) {
+        NavigationManager.NavigateTo($"/class-details/{id}");
+    }
+
+    private async Task DeleteClass(int id) {
+        await ClassService.DeleteClass(id);
+        classes = (await ClassService.GetAllClasses()).ToList();
+    }
+}

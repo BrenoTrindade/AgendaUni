@@ -41,7 +41,7 @@ namespace AgendaUni.Web.Services
         public async Task AddEvent(Event newEvent)
         {
             await AddJwtHeader();
-            await _httpClient.PostAsJsonAsync("api/Event", newEvent);
+            var response = await _httpClient.PostAsJsonAsync("api/Event", newEvent);
         }
 
         public async Task UpdateEvent(Event updatedEvent)

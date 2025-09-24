@@ -22,10 +22,8 @@
         <tbody>
             @foreach (var eventItem in events) {
                 <tr>
-                    <td>@eventItem.Title</td>
                     <td>@eventItem.Description</td>
-                    <td>@eventItem.StartDate.ToShortDateString()</td>
-                    <td>@eventItem.EndDate.ToShortDateString()</td>
+                    <td>@eventItem.EventDate.ToShortDateString()</td>
                     <td>
                         <button class="btn btn-primary" @onclick="(() => EditEvent(eventItem.Id))">Edit</button>
                         <button class="btn btn-danger" @onclick="(() => DeleteEvent(eventItem.Id))">Delete</button>

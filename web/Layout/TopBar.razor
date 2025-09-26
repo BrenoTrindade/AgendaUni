@@ -4,7 +4,7 @@
 <div class="top-row px-4 d-flex justify-content-end align-items-center">
     <AuthorizeView>
         <Authorized>
-            <span class="text-black me-3">Olá, @context.User.Identity?.Name!</span>
+            <span class="text-black me-3">Olá, @context.User.Identity?.Name?.Split('@')[0]!</span>
             <button class="btn btn-link text-black" @onclick="Logout">
                 <span class="bi bi-box-arrow-right" aria-hidden="true"></span> Logout
             </button>

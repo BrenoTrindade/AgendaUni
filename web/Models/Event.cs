@@ -9,7 +9,7 @@ namespace AgendaUni.Web.Models
         public int Id { get; set; }
 
         [Required]
-        public DateTime EventDate { get; set; }
+        public DateTime EventDate { get; set; } = DateTime.Now;
 
         [Required]
         [StringLength(200)]

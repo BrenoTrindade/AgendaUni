@@ -10,7 +10,7 @@ namespace AgendaUni.Web.Models
         public int Id { get; set; }
 
         [Required]
-        public DateTime AbsenceDate { get; set; }
+        public DateTime AbsenceDate { get; set; } = DateTime.Now;
 
         [Required]
         [StringLength(200)]

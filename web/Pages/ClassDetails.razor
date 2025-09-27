@@ -39,7 +39,7 @@
     }
 
     private async Task HandleSubmit() {
-        if (Id != null) {
+        if (Id != 0) {
             await ClassService.UpdateClass(classItem);
         } else {
             await ClassService.AddClass(classItem);

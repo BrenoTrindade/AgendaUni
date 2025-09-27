@@ -13,14 +13,6 @@
     <ValidationSummary />
 
     <div class="form-group">
-        <label for="absenceDate">Absence Date:</label>
-        <InputDate id="absenceDate" class="form-control" @bind-Value="@absence.AbsenceDate" />
-    </div>
-    <div class="form-group">
-        <label for="absenceReason">Absence Reason:</label>
-        <InputText id="absenceReason" class="form-control" @bind-Value="@absence.AbsenceReason" />
-    </div>
-    <div class="form-group">
         <label for="classId">Class:</label>
         <InputSelect id="classId" class="form-control" @bind-Value="@absence.ClassId">
             @if (classes != null)
@@ -32,6 +24,16 @@
             }
         </InputSelect>
     </div>
+
+    <div class="form-group">
+        <label for="absenceDate">Absence Date:</label>
+        <InputDate id="absenceDate" class="form-control" @bind-Value="@absence.AbsenceDate" />
+    </div>
+    <div class="form-group">
+        <label for="absenceReason">Absence Reason:</label>
+        <InputText id="absenceReason" class="form-control" @bind-Value="@absence.AbsenceReason" />
+    </div>
+    
 
     <button type="submit" class="btn btn-primary">Save</button>
     <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>

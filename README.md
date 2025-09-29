@@ -10,7 +10,9 @@ Organize sua vida acadêmica com praticidade! O AgendaUni é um aplicativo mobil
 
 - [x] Funciona offline
 
-- [ ]  Integração futura com API e versão web
+- [x] Integração com API
+
+- [ ] Versão web
 
 # 📷 Screenshots
 <img width="385" height="548" alt="image" src="https://github.com/user-attachments/assets/ea9a9bb9-1a87-48c6-9958-841429370ed6" /> <br>

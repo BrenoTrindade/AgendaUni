@@ -1,13 +1,10 @@
-using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Threading.Tasks;
 using AgendaUni.Web.Models;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace AgendaUni.Web.Services
+namespace AgendaUni.Web.Services.Authentication
 {
     public class AuthService
     {

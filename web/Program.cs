@@ -2,16 +2,14 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using AgendaUni.Web;
 using AgendaUni.Web.Services;
-using System.Net.Http.Json;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Globalization;
+using AgendaUni.Web.Services.Authentication;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-
-//var appSettings = await new HttpClient().GetFromJsonAsync<App>();
 
 var s = builder.Configuration["ApiBaseUrl"];
 
@@ -20,6 +18,8 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+
+builder.Services.AddSingleton<JwtHelper>();
 
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<EventService>(sp => new EventService(sp.GetRequiredService<HttpClient>(), sp.GetRequiredService<ILocalStorageService>()));

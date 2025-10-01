@@ -60,7 +60,10 @@ dotnet run
 
 # 📦 Publicação
 
-O aplicativo será publicado na Play Store em breve.
+O AgendaUni está atualmente em **fase de teste interno** na Google Play Store. Apenas testadores convidados têm acesso ao aplicativo neste momento.  
+
+Se você quiser participar dos testes, entre em contato com o desenvolvedor para receber o convite.  
+Em breve, o aplicativo estará disponível para todos os usuários na versão oficial.
 
 # 🛠️ Tecnologias utilizadas
 

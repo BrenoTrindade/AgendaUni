@@ -1,3 +1,9 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    background: #f0f2f5; /* cor de fundo da página */
+}
+
 .login-container {
     display: flex;
     justify-content: center;

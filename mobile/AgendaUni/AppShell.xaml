@@ -4,7 +4,6 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:AgendaUni.Views"
-    Shell.FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray600}}"
     Title="AgendaUni">
 
     <ShellContent
@@ -27,5 +26,10 @@
     <ShellContent
         Title="Eventos"
         ContentTemplate="{DataTemplate local:EventPage}" />
+
+    <Shell.ToolbarItems>
+        <ToolbarItem Clicked="OnThemeClicked"
+                     IconImageSource="{AppThemeBinding Light=lightmode.svg, Dark=darkmode.svg}"/>
+    </Shell.ToolbarItems>
 
 </Shell>

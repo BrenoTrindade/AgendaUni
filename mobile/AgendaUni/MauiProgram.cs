@@ -35,6 +35,8 @@ namespace AgendaUni
             builder.Services.AddScoped<IEventRepository, EventRepository>();
             builder.Services.AddScoped<EventService>();
 
+            builder.Services.AddSingleton<ThemeService>();
+
             builder.Services.AddTransient<ClassViewModel>();
             builder.Services.AddTransient<ClassPage>();
 
@@ -49,6 +51,7 @@ namespace AgendaUni
 
             builder.Services.AddTransient<MainPageViewModel>();
             builder.Services.AddTransient<MainPage>();
+
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

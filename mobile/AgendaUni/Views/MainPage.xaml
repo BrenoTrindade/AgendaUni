@@ -8,20 +8,20 @@
     <ContentPage.Resources>
         <converters:EventsColorConverter x:Key="EventsColorConverter" />
         <Style x:Key="MonthStyle" TargetType="Label">
-            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource LightPrimaryText}, Dark={StaticResource DarkPrimaryText}}" />
             <Setter Property="FontSize" Value="20" />
             <Setter Property="FontAttributes" Value="Bold" />
             <Setter Property="HorizontalOptions" Value="Center" />
             <Setter Property="VerticalOptions" Value="Center" />
         </Style>
         <Style x:Key="WeekendTitleStyle" TargetType="Label">
-            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource LightPrimaryText}, Dark={StaticResource DarkPrimaryText}}" />
             <Setter Property="FontSize" Value="16" />
             <Setter Property="HorizontalOptions" Value="Center" />
             <Setter Property="VerticalOptions" Value="Center" />
         </Style>
         <Style x:Key="NextMonthArrowButtonStyle" TargetType="Button">
-            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource LightPrimaryText}, Dark={StaticResource DarkPrimaryText}}" />
             <Setter Property="FontSize" Value="24" />
             <Setter Property="HorizontalOptions" Value="Center" />
             <Setter Property="VerticalOptions" Value="Center" />
@@ -31,12 +31,12 @@
             <Setter Property="Padding" Value="0" />
             <Setter Property="WidthRequest" Value="40" />
             <Setter Property="HeightRequest" Value="40" />
-            <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource LightPrimaryText}, Dark={StaticResource DarkPrimaryText}}" />
             <Setter Property="BorderWidth" Value="1" />
             <Setter Property="CornerRadius" Value="8" />
         </Style>
         <Style x:Key="PreviousMonthArrowButtonStyle" TargetType="Button">
-            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource LightPrimaryText}, Dark={StaticResource DarkPrimaryText}}" />
             <Setter Property="FontSize" Value="24" />
             <Setter Property="HorizontalOptions" Value="Center" />
             <Setter Property="VerticalOptions" Value="Center" />
@@ -46,26 +46,26 @@
             <Setter Property="Padding" Value="0" />
             <Setter Property="WidthRequest" Value="40" />
             <Setter Property="HeightRequest" Value="40" />
-            <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource LightPrimaryText}, Dark={StaticResource DarkPrimaryText}}" />
             <Setter Property="BorderWidth" Value="1" />
             <Setter Property="CornerRadius" Value="8" />
         </Style>
         <Style x:Key="SelectedDayStyle" TargetType="Label">
-            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource LightPrimaryText}, Dark={StaticResource DarkPrimaryText}}" />
             <Setter Property="FontSize" Value="20" />
             <Setter Property="FontAttributes" Value="Bold" />
             <Setter Property="HorizontalOptions" Value="Start" />
             <Setter Property="VerticalOptions" Value="Center" />
         </Style>
         <Style x:Key="DaysLabelStyle" TargetType="Label">
-            <Setter Property="TextColor" Value="White" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource LightPrimaryText}, Dark={StaticResource DarkPrimaryText}}" />
             <Setter Property="FontSize" Value="14" />
         </Style>
         <Style x:Key="DayButtonStyle" TargetType="Button">
-            <Setter Property="TextColor" Value="White" />
+            <Setter Property="TextColor" Value="{StaticResource White}" />
             <Setter Property="FontAttributes" Value="Bold" />
             <Setter Property="CornerRadius" Value="6" />
-            <Setter Property="BackgroundColor" Value="#6B7280" />
+            <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
             <Setter Property="Padding" Value="10,5" />
             <Setter Property="FontSize" Value="16" />
         </Style>
@@ -89,10 +89,10 @@
         
         <controls:Calendar
             Culture="{Binding Culture}"
-            TodayOutlineColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}"
-            EventIndicatorColor="Black"
-            EventIndicatorSelectedColor ="#1F2937"
-            SelectedDayBackgroundColor="#E5E7EB"
+            TodayOutlineColor="{StaticResource Accent}"
+            EventIndicatorColor="{AppThemeBinding Light={StaticResource LightPrimaryText}, Dark={StaticResource DarkPrimaryText}}"
+            EventIndicatorSelectedColor ="{AppThemeBinding Light={StaticResource LightPrimaryText}, Dark={StaticResource DarkPrimaryText}}"
+            SelectedDayBackgroundColor="{AppThemeBinding Light={StaticResource LightTertiary}, Dark={StaticResource DarkTertiary}}"
             ShowYearPicker="False"
             SelectedDateLabelStyle="{StaticResource SelectedDayStyle}"
             MonthLabelStyle="{StaticResource MonthStyle}"

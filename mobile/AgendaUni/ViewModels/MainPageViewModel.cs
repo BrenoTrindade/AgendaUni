@@ -21,6 +21,7 @@ namespace AgendaUni.ViewModels
         public CultureInfo Culture => new CultureInfo("pt-BR");
 
         List<ClassEvent> classEvents;
+
         public MainPageViewModel(ClassService classService, AbsenceService absenceService, ClassScheduleService classScheduleService, EventService eventService)
         {
             _classService = classService;

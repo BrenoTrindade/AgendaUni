@@ -36,7 +36,7 @@ public class EventViewModel : BaseViewModel
     {
         NewEvent.ClassId = SelectedClass?.Id ?? 0;
 
-        var result = await _eventService.RegisterEventAsync(NewEvent);
+        var result = await _eventService.AddEventAsync(NewEvent);
         await ShowMessageAsync(result.Message, result.IsSuccess ? "Sucesso" : "Aviso");
 
         if (result.IsSuccess)

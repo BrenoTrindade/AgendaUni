@@ -64,7 +64,7 @@ public class ClassScheduleViewModel : BaseViewModel
                 ClassTime = ClassTime
             };
 
-            var result = await _classScheduleService.RegisterClassScheduleAsync(schedule);
+            var result = await _classScheduleService.AddClassScheduleAsync(schedule);
 
             if (!result.IsSuccess)
             {

@@ -26,7 +26,7 @@ namespace AgendaUni
             builder.Services.AddScoped<IClassRepository, ClassRepository>();
             builder.Services.AddScoped<ClassService>();
 
-            builder.Services.AddScoped<IAbsenceRepository, AbsenceRespository>();
+            builder.Services.AddScoped<IAbsenceRepository, AbsenceRepository>();
             builder.Services.AddScoped<AbsenceService>();
 
             builder.Services.AddScoped<IClassScheduleRepository, ClassScheduleRepository>();

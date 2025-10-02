@@ -18,14 +18,13 @@ namespace AgendaUni.Tests
         }
 
         [Fact]
-        public async Task RegisterClassScheduleAsync_ShouldReturnSuccess_WhenScheduleIsValid()
+        public async Task AddClassScheduleAsync_ShouldReturnSuccess_WhenScheduleIsValid()
         {
             // Arrange
             var newSchedule = new ClassSchedule { ClassId = 1, DayOfWeek = DayOfWeek.Monday, ClassTime = new TimeSpan(9, 0, 0) };
-            _mockClassScheduleRepository.Setup(repo => repo.AddAsync(newSchedule)).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _classScheduleService.RegisterClassScheduleAsync(newSchedule);
+            var result = await _classScheduleService.AddClassScheduleAsync(newSchedule);
 
             // Assert
             Assert.True(result.IsSuccess);
@@ -34,13 +33,13 @@ namespace AgendaUni.Tests
         }
 
         [Fact]
-        public async Task RegisterClassScheduleAsync_ShouldReturnFailure_WhenClassIdIsZero()
+        public async Task AddClassScheduleAsync_ShouldReturnFailure_WhenClassIdIsZero()
         {
             // Arrange
             var newSchedule = new ClassSchedule { ClassId = 0, DayOfWeek = DayOfWeek.Monday, ClassTime = new TimeSpan(9, 0, 0) };
 
             // Act
-            var result = await _classScheduleService.RegisterClassScheduleAsync(newSchedule);
+            var result = await _classScheduleService.AddClassScheduleAsync(newSchedule);
 
             // Assert
             Assert.False(result.IsSuccess);
@@ -49,14 +48,14 @@ namespace AgendaUni.Tests
         }
 
         [Fact]
-        public async Task RegisterClassScheduleAsync_ShouldReturnFailure_WhenDayOfWeekIsInvalid()
+        public async Task AddClassScheduleAsync_ShouldReturnFailure_WhenDayOfWeekIsInvalid()
         {
             // Arrange
             var invalidDayOfWeek = (DayOfWeek)999;
             var newSchedule = new ClassSchedule { ClassId = 1, DayOfWeek = invalidDayOfWeek, ClassTime = new TimeSpan(9, 0, 0) };
 
             // Act
-            var result = await _classScheduleService.RegisterClassScheduleAsync(newSchedule);
+            var result = await _classScheduleService.AddClassScheduleAsync(newSchedule);
 
             // Assert
             Assert.False(result.IsSuccess);
@@ -65,18 +64,66 @@ namespace AgendaUni.Tests
         }
 
         [Fact]
-        public async Task RegisterClassScheduleAsync_ShouldReturnFailure_WhenClassTimeIsDefault()
+        public async Task AddClassScheduleAsync_ShouldReturnFailure_WhenClassTimeIsDefault()
         {
             // Arrange
             var newSchedule = new ClassSchedule { ClassId = 1, DayOfWeek = DayOfWeek.Monday, ClassTime = default };
 
             // Act
-            var result = await _classScheduleService.RegisterClassScheduleAsync(newSchedule);
+            var result = await _classScheduleService.AddClassScheduleAsync(newSchedule);
 
             // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal("Informe o horário da aula.", result.Message);
             _mockClassScheduleRepository.Verify(repo => repo.AddAsync(It.IsAny<ClassSchedule>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task UpdateClassScheduleAsync_ShouldReturnSuccess_WhenScheduleIsValid()
+        {
+            // Arrange
+            var schedule = new ClassSchedule { Id = 1, ClassId = 1, DayOfWeek = DayOfWeek.Tuesday, ClassTime = new TimeSpan(10, 0, 0) };
+
+            // Act
+            var result = await _classScheduleService.UpdateClassScheduleAsync(schedule);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.Equal("Horário da aula atualizado com sucesso.", result.Message);
+            _mockClassScheduleRepository.Verify(repo => repo.UpdateAsync(schedule), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteClassScheduleAsync_ShouldReturnSuccess_WhenScheduleExists()
+        {
+            // Arrange
+            var scheduleId = 1;
+            var existingSchedule = new ClassSchedule { Id = scheduleId };
+            _mockClassScheduleRepository.Setup(r => r.GetByIdAsync(scheduleId)).ReturnsAsync(existingSchedule);
+
+            // Act
+            var result = await _classScheduleService.DeleteClassScheduleAsync(scheduleId);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.Equal("Horário deletado com sucesso.", result.Message);
+            _mockClassScheduleRepository.Verify(r => r.DeleteAsync(scheduleId), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteClassScheduleAsync_ShouldReturnFailure_WhenScheduleDoesNotExist()
+        {
+            // Arrange
+            var scheduleId = 99;
+            _mockClassScheduleRepository.Setup(r => r.GetByIdAsync(scheduleId)).ReturnsAsync((ClassSchedule)null);
+
+            // Act
+            var result = await _classScheduleService.DeleteClassScheduleAsync(scheduleId);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal("Horário não encontrado.", result.Message);
+            _mockClassScheduleRepository.Verify(r => r.DeleteAsync(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]

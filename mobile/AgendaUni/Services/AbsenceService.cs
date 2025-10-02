@@ -13,7 +13,7 @@ namespace AgendaUni.Services
             _absenceRepository = absenceRepository;
         }
 
-        public async Task<ServiceResult> RegisterAbsenceAsync(Absence absence)
+        public async Task<ServiceResult> AddAbsenceAsync(Absence absence)
         {
             if (absence.ClassId == 0)
                 return ServiceResult.Failure("Selecione uma aula.");
@@ -29,6 +29,30 @@ namespace AgendaUni.Services
         public async Task<IEnumerable<Absence>> GetAllAbsencesAsync()
         {
             return await _absenceRepository.GetAllAsync();
+        }
+
+        public async Task<ServiceResult> UpdateAbsenceAsync(Absence absence)
+        {
+            if (absence.ClassId == 0)
+                return ServiceResult.Failure("Selecione uma aula.");
+
+            if (string.IsNullOrWhiteSpace(absence.AbsenceReason))
+                return ServiceResult.Failure("Informe o motivo da falta.");
+
+            await _absenceRepository.UpdateAsync(absence);
+
+            return ServiceResult.Success("Falta atualizada com sucesso.");
+        }
+
+        public async Task<ServiceResult> DeleteAbsenceAsync(int id)
+        {
+            var absenceToDelete = await _absenceRepository.GetByIdAsync(id);
+            if (absenceToDelete == null)
+                return ServiceResult.Failure("Falta não encontrada.");
+
+            await _absenceRepository.DeleteAsync(id);
+
+            return ServiceResult.Success("Falta deletada com sucesso.");
         }
     }
 }

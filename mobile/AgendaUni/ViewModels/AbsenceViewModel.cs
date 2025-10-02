@@ -36,7 +36,7 @@ public class AbsenceViewModel : BaseViewModel
     {
         NewAbsence.ClassId = SelectedClass?.Id ?? 0;
 
-        var result = await _absenceService.RegisterAbsenceAsync(NewAbsence);
+        var result = await _absenceService.AddAbsenceAsync(NewAbsence);
         await ShowMessageAsync(result.Message, result.IsSuccess ? "Sucesso" : "Aviso");
 
         if (result.IsSuccess)

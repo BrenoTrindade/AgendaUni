@@ -23,22 +23,14 @@ namespace AgendaUni.Tests
         }
 
         [Fact]
-        public async Task RegisterEventAsync_ShouldReturnSuccess_WhenEventIsValid()
+        public async Task AddEventAsync_ShouldReturnSuccess_WhenEventIsValid()
         {
             // Arrange
-            var newEvent = new Event
-            {
-                ClassId = 1,
-                EventDate = DateTime.Now,
-                Description = "Reunião"
-            };
-
-            _mockEventRepository
-                .Setup(repo => repo.AddAsync(newEvent))
-                .Returns(Task.CompletedTask);
+            var newEvent = new Event { ClassId = 1, EventDate = DateTime.Now, Description = "Reunião" };
+            _mockEventRepository.Setup(repo => repo.AddAsync(newEvent)).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _eventService.RegisterEventAsync(newEvent);
+            var result = await _eventService.AddEventAsync(newEvent);
 
             // Assert
             Assert.True(result.IsSuccess);
@@ -47,18 +39,13 @@ namespace AgendaUni.Tests
         }
 
         [Fact]
-        public async Task RegisterEventAsync_ShouldReturnFailure_WhenClassIdIsZero()
+        public async Task AddEventAsync_ShouldReturnFailure_WhenClassIdIsZero()
         {
             // Arrange
-            var newEvent = new Event
-            {
-                ClassId = 0,
-                EventDate = DateTime.Now,
-                Description = "Evento sem aula"
-            };
+            var newEvent = new Event { ClassId = 0, EventDate = DateTime.Now, Description = "Evento sem aula" };
 
             // Act
-            var result = await _eventService.RegisterEventAsync(newEvent);
+            var result = await _eventService.AddEventAsync(newEvent);
 
             // Assert
             Assert.False(result.IsSuccess);
@@ -67,18 +54,13 @@ namespace AgendaUni.Tests
         }
 
         [Fact]
-        public async Task RegisterEventAsync_ShouldReturnFailure_WhenDescriptionIsEmpty()
+        public async Task AddEventAsync_ShouldReturnFailure_WhenDescriptionIsEmpty()
         {
             // Arrange
-            var newEvent = new Event
-            {
-                ClassId = 1,
-                EventDate = DateTime.Now,
-                Description = ""
-            };
+            var newEvent = new Event { ClassId = 1, EventDate = DateTime.Now, Description = "" };
 
             // Act
-            var result = await _eventService.RegisterEventAsync(newEvent);
+            var result = await _eventService.AddEventAsync(newEvent);
 
             // Assert
             Assert.False(result.IsSuccess);
@@ -87,23 +69,66 @@ namespace AgendaUni.Tests
         }
 
         [Fact]
-        public async Task RegisterEventAsync_ShouldReturnFailure_WhenDescriptionIsWhitespace()
+        public async Task UpdateEventAsync_ShouldReturnSuccess_WhenEventIsValid()
         {
             // Arrange
-            var newEvent = new Event
-            {
-                ClassId = 1,
-                EventDate = DateTime.Now,
-                Description = "   "
-            };
+            var eventToUpdate = new Event { Id = 1, ClassId = 1, Description = "Updated Description" };
 
             // Act
-            var result = await _eventService.RegisterEventAsync(newEvent);
+            var result = await _eventService.UpdateEventAsync(eventToUpdate);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.Equal("Evento atualizado com sucesso.", result.Message);
+            _mockEventRepository.Verify(r => r.UpdateAsync(eventToUpdate), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateEventAsync_ShouldReturnFailure_WhenDescriptionIsEmpty()
+        {
+            // Arrange
+            var eventToUpdate = new Event { Id = 1, ClassId = 1, Description = "" };
+
+            // Act
+            var result = await _eventService.UpdateEventAsync(eventToUpdate);
 
             // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal("Informe a descrição do evento.", result.Message);
-            _mockEventRepository.Verify(repo => repo.AddAsync(It.IsAny<Event>()), Times.Never);
+            _mockEventRepository.Verify(r => r.UpdateAsync(It.IsAny<Event>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task DeleteEventAsync_ShouldReturnSuccess_WhenEventExists()
+        {
+            // Arrange
+            var eventId = 1;
+            var existingEvent = new Event { Id = eventId };
+            _mockEventRepository.Setup(r => r.GetByIdAsync(eventId)).ReturnsAsync(existingEvent);
+
+            // Act
+            var result = await _eventService.DeleteEventAsync(eventId);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.Equal("Evento deletado com sucesso.", result.Message);
+            _mockEventRepository.Verify(r => r.DeleteAsync(eventId), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteEventAsync_ShouldReturnFailure_WhenEventDoesNotExist()
+        {
+            // Arrange
+            var eventId = 99;
+            _mockEventRepository.Setup(r => r.GetByIdAsync(eventId)).ReturnsAsync((Event)null);
+
+            // Act
+            var result = await _eventService.DeleteEventAsync(eventId);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal("Evento não encontrado.", result.Message);
+            _mockEventRepository.Verify(r => r.DeleteAsync(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
@@ -116,9 +141,7 @@ namespace AgendaUni.Tests
                 new Event { Id = 2, ClassId = 2, EventDate = DateTime.Now, Description = "Evento 2" }
             };
 
-            _mockEventRepository
-                .Setup(repo => repo.GetAllAsync())
-                .ReturnsAsync(eventList);
+            _mockEventRepository.Setup(repo => repo.GetAllAsync()).ReturnsAsync(eventList);
 
             // Act
             var result = await _eventService.GetAllEventsAsync();

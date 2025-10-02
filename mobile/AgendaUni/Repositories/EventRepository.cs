@@ -49,5 +49,57 @@ namespace AgendaUni.Repositories
             }
             return events;
         }
+
+        public async Task<Event> GetByIdAsync(int id)
+        {
+            using var connection = _context.GetConnection();
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            command.CommandText = @"SELECT Id, EventDate, Description, ClassId FROM Event WHERE Id = $id;";
+            command.Parameters.AddWithValue("$id", id);
+            using var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return new Event
+                {
+                    Id = reader.GetInt32(0),
+                    EventDate = reader.GetDateTime(1),
+                    Description = reader.GetString(2),
+                    ClassId = reader.GetInt32(3)
+                };
+            }
+            return null;
+        }
+
+        public async Task UpdateAsync(Event ev)
+        {
+            using var connection = _context.GetConnection();
+            await connection.OpenAsync();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                UPDATE Event SET
+                    EventDate = $eventDate,
+                    Description = $description,
+                    ClassId = $classId
+                WHERE Id = $id;";
+            command.Parameters.AddWithValue("$eventDate", ev.EventDate);
+            command.Parameters.AddWithValue("$description", ev.Description);
+            command.Parameters.AddWithValue("$classId", ev.ClassId);
+            command.Parameters.AddWithValue("$id", ev.Id);
+
+            await command.ExecuteNonQueryAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            using var connection = _context.GetConnection();
+            await connection.OpenAsync();
+
+            var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM Event WHERE Id = $id;";
+            command.Parameters.AddWithValue("$id", id);
+            await command.ExecuteNonQueryAsync();
+        }
     }
 }

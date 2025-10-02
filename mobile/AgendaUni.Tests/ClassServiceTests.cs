@@ -68,6 +68,84 @@ namespace AgendaUni.Tests
         }
 
         [Fact]
+        public async Task UpdateClassAsync_ShouldReturnSuccess_WhenClassIsValid()
+        {
+            // Arrange
+            var classToUpdate = new Class { Id = 1, ClassName = "Advanced Math", MaximumAbsences = 5 };
+
+            // Act
+            var result = await _classService.UpdateClassAsync(classToUpdate);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.Equal("Aula atualizada com sucesso.", result.Message);
+            _mockClassRepository.Verify(repo => repo.UpdateAsync(classToUpdate), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateClassAsync_ShouldReturnFailure_WhenClassNameIsEmpty()
+        {
+            // Arrange
+            var classToUpdate = new Class { Id = 1, ClassName = "", MaximumAbsences = 5 };
+
+            // Act
+            var result = await _classService.UpdateClassAsync(classToUpdate);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal("O nome da aula não pode ser vazio.", result.Message);
+            _mockClassRepository.Verify(repo => repo.UpdateAsync(It.IsAny<Class>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task UpdateClassAsync_ShouldReturnFailure_WhenMaximumAbsencesIsNegative()
+        {
+            // Arrange
+            var classToUpdate = new Class { Id = 1, ClassName = "Advanced Math", MaximumAbsences = -1 };
+
+            // Act
+            var result = await _classService.UpdateClassAsync(classToUpdate);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal("A quantidade máxima de faltas não pode ser negativa.", result.Message);
+            _mockClassRepository.Verify(repo => repo.UpdateAsync(It.IsAny<Class>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task DeleteClassAsync_ShouldReturnSuccess_WhenClassExists()
+        {
+            // Arrange
+            var classId = 1;
+            var classToDelete = new Class { Id = classId, ClassName = "Math", MaximumAbsences = 5 };
+            _mockClassRepository.Setup(repo => repo.GetByIdAsync(classId)).ReturnsAsync(classToDelete);
+
+            // Act
+            var result = await _classService.DeleteClassAsync(classId);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.Equal("Aula deletada com sucesso.", result.Message);
+            _mockClassRepository.Verify(repo => repo.DeleteAsync(classId), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteClassAsync_ShouldReturnFailure_WhenClassDoesNotExist()
+        {
+            // Arrange
+            var classId = 99;
+            _mockClassRepository.Setup(repo => repo.GetByIdAsync(classId)).ReturnsAsync((Class)null);
+
+            // Act
+            var result = await _classService.DeleteClassAsync(classId);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal("Aula não encontrada.", result.Message);
+            _mockClassRepository.Verify(repo => repo.DeleteAsync(It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
         public async Task GetAllClassesAsync_ShouldReturnAllClasses()
         {
             // Arrange

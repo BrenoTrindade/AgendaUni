@@ -117,5 +117,58 @@ namespace AgendaUni.Repositories
 
             await command.ExecuteScalarAsync();
         }
+
+        public async Task UpdateAsync(Class classObj)
+        {
+            using var connection = _context.GetConnection();
+            await connection.OpenAsync();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                UPDATE Class SET
+                    ClassName = $className,
+                    MaximumAbsences = $maximumAbsences
+                WHERE Id = $id;";
+            command.Parameters.AddWithValue("$className", classObj.ClassName);
+            command.Parameters.AddWithValue("$maximumAbsences", classObj.MaximumAbsences);
+            command.Parameters.AddWithValue("$id", classObj.Id);
+
+            await command.ExecuteNonQueryAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            using var connection = _context.GetConnection();
+            await connection.OpenAsync();
+
+            using var transaction = connection.BeginTransaction();
+            try
+            {
+                var command = connection.CreateCommand();
+                command.Transaction = transaction;
+
+                // Deletar entidades relacionadas
+                command.CommandText = "DELETE FROM Absence WHERE ClassId = $id;";
+                command.Parameters.AddWithValue("$id", id);
+                await command.ExecuteNonQueryAsync();
+
+                command.CommandText = "DELETE FROM ClassSchedule WHERE ClassId = $id;";
+                await command.ExecuteNonQueryAsync();
+
+                command.CommandText = "DELETE FROM Event WHERE ClassId = $id;";
+                await command.ExecuteNonQueryAsync();
+
+                // Deletar a classe principal
+                command.CommandText = "DELETE FROM Class WHERE Id = $id;";
+                await command.ExecuteNonQueryAsync();
+
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
     }
 }

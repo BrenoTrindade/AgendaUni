@@ -13,19 +13,19 @@
 
     <ShellContent
         Title="Aulas"
-        ContentTemplate="{DataTemplate local:ClassPage}" />
+        ContentTemplate="{DataTemplate local:ClassListPage}" />
 
     <ShellContent
         Title="Horários"
-        ContentTemplate="{DataTemplate local:ClassSchedulePage}" />
+        ContentTemplate="{DataTemplate local:ClassScheduleListPage}" />
 
     <ShellContent
         Title="Faltas"
-        ContentTemplate="{DataTemplate local:AbsencePage}" />
+        ContentTemplate="{DataTemplate local:AbsenceListPage}" />
 
     <ShellContent
         Title="Eventos"
-        ContentTemplate="{DataTemplate local:EventPage}" />
+        ContentTemplate="{DataTemplate local:EventListPage}" />
 
     <Shell.ToolbarItems>
         <ToolbarItem Clicked="OnThemeClicked"

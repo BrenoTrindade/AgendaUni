@@ -1,144 +1,140 @@
 ﻿using AgendaUni.Models;
 using AgendaUni.Services;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
+using Microsoft.Maui.Controls;
 
+[QueryProperty(nameof(ClassScheduleId), "ClassScheduleId")]
 public class ClassScheduleViewModel : BaseViewModel
 {
     private readonly ClassService _classService;
-
     private readonly ClassScheduleService _classScheduleService;
-    public bool MondaySelected { get; set; }
-    public bool TuesdaySelected { get; set; }
-    public bool WednesdaySelected { get; set; }
-    public bool ThursdaySelected { get; set; }
-    public bool FridaySelected { get; set; }
+
     public ObservableCollection<Class> Classes { get; set; } = new();
-    public ClassSchedule _classSchedule { get; set; } = new();
-    public Class SelectedClass { get; set; }
-    public ICommand RegisterClassScheduleCommand { get; }
-    public ICommand ToggleDayCommand => new Command<string>(ToggleDay);
-    public ClassScheduleViewModel(ClassScheduleService classScheduleServic, ClassService classService)
+    public ObservableCollection<DayOfWeek> DaysOfWeek { get; set; } = new(System.Enum.GetValues(typeof(DayOfWeek)).Cast<DayOfWeek>());
+
+    private ClassSchedule _currentClassSchedule;
+    public ClassSchedule CurrentClassSchedule
     {
-        _classScheduleService = classScheduleServic;
+        get => _currentClassSchedule;
+        set
+        {
+            SetProperty(ref _currentClassSchedule, value);
+            Title = value?.Id == 0 ? "Registrar Horário" : "Editar Horário";
+            if (value != null)
+            {
+                SelectedClass = Classes.FirstOrDefault(c => c.Id == value.ClassId);
+            }
+        }
+    }
+
+    private Class _selectedClass;
+    public Class SelectedClass
+    {
+        get => _selectedClass;
+        set => SetProperty(ref _selectedClass, value);
+    }
+
+    private string _title;
+    public string Title
+    {
+        get => _title;
+        set => SetProperty(ref _title, value);
+    }
+
+    public ICommand SaveClassScheduleCommand { get; }
+    public ICommand DeleteClassScheduleCommand { get; }
+
+    private int _classScheduleId;
+    public int ClassScheduleId
+    {
+        get => _classScheduleId;
+        set
+        {
+            _classScheduleId = value;
+            if (value > 0)
+            {
+                LoadClassScheduleAsync(value);
+            }
+        }
+    }
+
+    public ClassScheduleViewModel(ClassScheduleService classScheduleService, ClassService classService)
+    {
+        _classScheduleService = classScheduleService;
         _classService = classService;
 
-        RegisterClassScheduleCommand = new Command(async () => await AddClassSchedule());
-        
+        SaveClassScheduleCommand = new Command(async () => await SaveClassSchedule());
+        DeleteClassScheduleCommand = new Command(async () => await DeleteClassSchedule());
+
         _ = LoadClassesAsync();
+        if (ClassScheduleId == 0)
+        {
+            CurrentClassSchedule = new ClassSchedule();
+        }
+    }
+
+    private async Task LoadClassScheduleAsync(int classScheduleId)
+    {
+        CurrentClassSchedule = await _classScheduleService.GetClassScheduleByIdAsync(classScheduleId);
     }
 
     private async Task LoadClassesAsync()
     {
         var classes = await _classService.GetAllClassesAsync();
-
+        Classes.Clear();
         foreach (var item in classes)
             Classes.Add(item);
     }
 
-    private async Task AddClassSchedule()
+    private async Task SaveClassSchedule()
     {
-        var selectedDays = GetSelectedDaysList();
-
-        if (SelectedClass == null || SelectedClass.Id == 0)
+        if (SelectedClass == null)
         {
             await ShowMessageAsync("Selecione uma aula.", "Aviso");
             return;
         }
 
-        if (selectedDays.Count == 0)
+        CurrentClassSchedule.ClassId = SelectedClass.Id;
+
+        var result = CurrentClassSchedule.Id == 0
+            ? await _classScheduleService.AddClassScheduleAsync(CurrentClassSchedule)
+            : await _classScheduleService.UpdateClassScheduleAsync(CurrentClassSchedule);
+
+        await ShowMessageAsync(result.Message, result.IsSuccess ? "Sucesso" : "Aviso");
+
+        if (result.IsSuccess)
         {
-            await ShowMessageAsync("Selecione ao menos um dia da semana.", "Aviso");
+            await Shell.Current.GoToAsync("..");
+        }
+    }
+
+    private async Task DeleteClassSchedule()
+    {
+        if (CurrentClassSchedule.Id == 0)
+        {
+            await ShowMessageAsync("Não é possível excluir um horário que ainda não foi salvo.", "Aviso");
             return;
         }
 
-        bool allSuccess = true;
-        string finalMessage = "";
+        bool userConfirmed = await Application.Current.MainPage.DisplayAlert("Confirmar Exclusão", "Tem certeza de que deseja excluir este horário?", "Sim", "Não");
 
-        foreach (var day in selectedDays)
+        if (userConfirmed)
         {
-            var schedule = new ClassSchedule
+            var result = await _classScheduleService.DeleteClassScheduleAsync(CurrentClassSchedule.Id);
+            await ShowMessageAsync(result.Message, result.IsSuccess ? "Sucesso" : "Aviso");
+
+            if (result.IsSuccess)
             {
-                ClassId = SelectedClass.Id,
-                DayOfWeek = day,
-                ClassTime = ClassTime
-            };
-
-            var result = await _classScheduleService.AddClassScheduleAsync(schedule);
-
-            if (!result.IsSuccess)
-            {
-                allSuccess = false;
-                finalMessage += $"{day}: {result.Message}\n";
-            }
-        }
-
-        if (allSuccess)
-        {
-            finalMessage = "Horários cadastrados com sucesso.";
-            _classSchedule = new ClassSchedule();
-            OnPropertyChanged(nameof(ClassTime));
-        }
-
-        await ShowMessageAsync(finalMessage.Trim(), allSuccess ? "Sucesso" : "Aviso");
-    }
-
-    private void ToggleDay(string day)
-    {
-        switch (day)
-        {
-            case "Monday":
-                MondaySelected = !MondaySelected;
-                OnPropertyChanged(nameof(MondaySelected));
-                break;
-            case "Tuesday":
-                TuesdaySelected = !TuesdaySelected;
-                OnPropertyChanged(nameof(TuesdaySelected));
-                break;
-            case "Wednesday":
-                WednesdaySelected = !WednesdaySelected;
-                OnPropertyChanged(nameof(WednesdaySelected));
-                break;
-            case "Thursday":
-                ThursdaySelected = !ThursdaySelected;
-                OnPropertyChanged(nameof(ThursdaySelected));
-                break;
-            case "Friday":
-                FridaySelected = !FridaySelected;
-                OnPropertyChanged(nameof(FridaySelected));
-                break;
-        }
-    }
-    private List<DayOfWeek> GetSelectedDaysList()
-    {
-        var selectedDays = new List<DayOfWeek>();
-
-        if (MondaySelected) selectedDays.Add(DayOfWeek.Monday);
-        if (TuesdaySelected) selectedDays.Add(DayOfWeek.Tuesday);
-        if (WednesdaySelected) selectedDays.Add(DayOfWeek.Wednesday);
-        if (ThursdaySelected) selectedDays.Add(DayOfWeek.Thursday);
-        if (FridaySelected) selectedDays.Add(DayOfWeek.Friday);
-
-        return selectedDays;
-    }
-
-
-    public TimeSpan ClassTime
-    {
-        get => _classSchedule.ClassTime;
-        set
-        {
-            if (_classSchedule.ClassTime != value)
-            {
-                _classSchedule.ClassTime = value;
-                OnPropertyChanged(nameof(ClassTime));
+                await Shell.Current.GoToAsync("..");
             }
         }
     }
+
 
     private async Task ShowMessageAsync(string message, string title = "Aviso")
     {
         await Application.Current.MainPage.DisplayAlert(title, message, "OK");
     }
-
 }

@@ -31,6 +31,12 @@ namespace AgendaUni.Services
             return await _eventRepository.GetAllAsync();
         }
 
+        public async Task<Event> GetEventByIdAsync(int id)
+        {
+            return await _eventRepository.GetByIdAsync(id);
+        }
+
+
         public async Task<ServiceResult> UpdateEventAsync(Event ev)
         {
             if (ev.ClassId == 0)

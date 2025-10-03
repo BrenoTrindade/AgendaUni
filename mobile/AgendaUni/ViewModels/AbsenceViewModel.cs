@@ -1,26 +1,80 @@
 ﻿using AgendaUni.Models;
 using AgendaUni.Services;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
+using Microsoft.Maui.Controls;
 
+[QueryProperty(nameof(AbsenceId), "AbsenceId")]
 public class AbsenceViewModel : BaseViewModel
 {
     private readonly AbsenceService _absenceService;
     private readonly ClassService _classService;
 
     public ObservableCollection<Class> Classes { get; set; } = new();
-    public Absence NewAbsence { get; set; } = new Absence { AbsenceDate = DateTime.Now };
-    public ICommand RegisterAbsenceCommand { get; }
-    public Class SelectedClass { get; set; }
+    private Absence _currentAbsence;
+    public Absence CurrentAbsence
+    {
+        get => _currentAbsence;
+        set
+        {
+            SetProperty(ref _currentAbsence, value);
+            Title = value?.Id == 0 ? "Registrar Falta" : "Editar Falta";
+            if (value != null)
+            {
+                SelectedClass = Classes.FirstOrDefault(c => c.Id == value.ClassId);
+            }
+        }
+    }
+
+    private int _absenceId;
+    public int AbsenceId
+    {
+        get => _absenceId;
+        set
+        {
+            _absenceId = value;
+            if (value > 0)
+            {
+                LoadAbsenceAsync(value);
+            }
+        }
+    }
+
+    public ICommand SaveAbsenceCommand { get; }
+    public ICommand DeleteAbsenceCommand { get; }
+    private Class _selectedClass;
+    public Class SelectedClass
+    {
+        get => _selectedClass;
+        set => SetProperty(ref _selectedClass, value);
+    }
+
+    private string _title;
+    public string Title
+    {
+        get => _title;
+        set => SetProperty(ref _title, value);
+    }
 
     public AbsenceViewModel(AbsenceService absenceService, ClassService classService)
     {
         _absenceService = absenceService;
         _classService = classService;
 
-        RegisterAbsenceCommand = new Command(async () => await AddAbsence());
+        SaveAbsenceCommand = new Command(async () => await SaveAbsence());
+        DeleteAbsenceCommand = new Command(async () => await DeleteAbsence());
 
         _ = LoadClassesAsync();
+        if (AbsenceId == 0)
+        {
+            CurrentAbsence = new Absence { AbsenceDate = DateTime.Now };
+        }
+    }
+
+    private async Task LoadAbsenceAsync(int absenceId)
+    {
+        CurrentAbsence = await _absenceService.GetAbsenceByIdAsync(absenceId);
     }
 
     private async Task LoadClassesAsync()
@@ -32,19 +86,44 @@ public class AbsenceViewModel : BaseViewModel
             Classes.Add(item);
     }
 
-    private async Task AddAbsence()
+    private async Task SaveAbsence()
     {
-        NewAbsence.ClassId = SelectedClass?.Id ?? 0;
+        CurrentAbsence.ClassId = SelectedClass?.Id ?? 0;
 
-        var result = await _absenceService.AddAbsenceAsync(NewAbsence);
+        var result = CurrentAbsence.Id == 0
+            ? await _absenceService.AddAbsenceAsync(CurrentAbsence)
+            : await _absenceService.UpdateAbsenceAsync(CurrentAbsence);
+
         await ShowMessageAsync(result.Message, result.IsSuccess ? "Sucesso" : "Aviso");
 
         if (result.IsSuccess)
         {
-            NewAbsence = new Absence { AbsenceDate = DateTime.Now };
-            OnPropertyChanged(nameof(NewAbsence));
+            await Shell.Current.GoToAsync("..");
         }
     }
+
+    private async Task DeleteAbsence()
+    {
+        if (CurrentAbsence.Id == 0)
+        {
+            await ShowMessageAsync("Não é possível excluir uma falta que ainda não foi salva.", "Aviso");
+            return;
+        }
+
+        bool userConfirmed = await Application.Current.MainPage.DisplayAlert("Confirmar Exclusão", "Tem certeza de que deseja excluir esta falta?", "Sim", "Não");
+
+        if (userConfirmed)
+        {
+            var result = await _absenceService.DeleteAbsenceAsync(CurrentAbsence.Id);
+            await ShowMessageAsync(result.Message, result.IsSuccess ? "Sucesso" : "Aviso");
+
+            if (result.IsSuccess)
+            {
+                await Shell.Current.GoToAsync("..");
+            }
+        }
+    }
+
 
     private async Task ShowMessageAsync(string message, string title = "Aviso")
     {

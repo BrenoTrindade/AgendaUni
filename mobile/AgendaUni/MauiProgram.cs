@@ -35,20 +35,35 @@ namespace AgendaUni
             builder.Services.AddScoped<IEventRepository, EventRepository>();
             builder.Services.AddScoped<EventService>();
 
+            builder.Services.AddSingleton<ThemeService>();
+
             builder.Services.AddTransient<ClassViewModel>();
             builder.Services.AddTransient<ClassPage>();
+
+            builder.Services.AddTransient<ClassListViewModel>();
+            builder.Services.AddTransient<ClassListPage>();
 
             builder.Services.AddTransient<ClassScheduleViewModel>();
             builder.Services.AddTransient<ClassSchedulePage>();
 
+            builder.Services.AddTransient<ClassScheduleListViewModel>();
+            builder.Services.AddTransient<ClassScheduleListPage>();
+
             builder.Services.AddTransient<AbsenceViewModel>();
             builder.Services.AddTransient<AbsencePage>();
+
+            builder.Services.AddTransient<AbsenceListViewModel>();
+            builder.Services.AddTransient<AbsenceListPage>();
 
             builder.Services.AddTransient<EventViewModel>();
             builder.Services.AddTransient<EventPage>();
 
+            builder.Services.AddTransient<EventListViewModel>();
+            builder.Services.AddTransient<EventListPage>();
+
             builder.Services.AddTransient<MainPageViewModel>();
             builder.Services.AddTransient<MainPage>();
+
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

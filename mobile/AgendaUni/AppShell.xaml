@@ -4,7 +4,6 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:AgendaUni.Views"
-    Shell.FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray600}}"
     Title="AgendaUni">
 
     <ShellContent
@@ -14,18 +13,23 @@
 
     <ShellContent
         Title="Aulas"
-        ContentTemplate="{DataTemplate local:ClassPage}" />
+        ContentTemplate="{DataTemplate local:ClassListPage}" />
 
     <ShellContent
         Title="Horários"
-        ContentTemplate="{DataTemplate local:ClassSchedulePage}" />
+        ContentTemplate="{DataTemplate local:ClassScheduleListPage}" />
 
     <ShellContent
         Title="Faltas"
-        ContentTemplate="{DataTemplate local:AbsencePage}" />
+        ContentTemplate="{DataTemplate local:AbsenceListPage}" />
 
     <ShellContent
         Title="Eventos"
-        ContentTemplate="{DataTemplate local:EventPage}" />
+        ContentTemplate="{DataTemplate local:EventListPage}" />
+
+    <Shell.ToolbarItems>
+        <ToolbarItem Clicked="OnThemeClicked"
+                     IconImageSource="{AppThemeBinding Light=lightmode.svg, Dark=darkmode.svg}"/>
+    </Shell.ToolbarItems>
 
 </Shell>

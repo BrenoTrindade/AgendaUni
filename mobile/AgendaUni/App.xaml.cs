@@ -6,6 +6,7 @@
         {
             InitializeComponent();
             dbContext.InitializeDatabase();
+            Current.UserAppTheme = AppTheme.Light;
         }
 
         protected override Window CreateWindow(IActivationState? activationState)

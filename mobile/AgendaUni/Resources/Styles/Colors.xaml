@@ -12,11 +12,11 @@
     <Color x:Key="LightSecondaryText">#757575</Color>
 
     <!-- Dark Theme -->
-    <Color x:Key="DarkPrimary">#121212</Color>
-    <Color x:Key="DarkSecondary">#1E1E1E</Color>
-    <Color x:Key="DarkTertiary">#2C2C2C</Color>
-    <Color x:Key="DarkPrimaryText">#FFFFFF</Color>
-    <Color x:Key="DarkSecondaryText">#BDBDBD</Color>
+    <Color x:Key="DarkPrimary">#2A2A2E</Color>
+    <Color x:Key="DarkSecondary">#36363B</Color>
+    <Color x:Key="DarkTertiary">#48484E</Color>
+    <Color x:Key="DarkPrimaryText">#F5F5F5</Color>
+    <Color x:Key="DarkSecondaryText">#C5C5C5</Color>
 
     <!-- General Colors -->
     <Color x:Key="Accent">#007AFF</Color> <!-- Blue Accent -->

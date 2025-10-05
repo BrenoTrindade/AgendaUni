@@ -1,9 +1,36 @@
-﻿using AgendaUni.Models;
+using AgendaUni.Models;
 using AgendaUni.Services;
+using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
+
+public class SelectableDay : BaseViewModel
+{
+    public DayOfWeek Day { get; }
+    public string Name { get; }
+
+    private bool _isSelected;
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set => SetProperty(ref _isSelected, value);
+    }
+
+    public ICommand ToggleSelectionCommand { get; }
+
+    public SelectableDay(DayOfWeek day)
+    {
+        Day = day;
+        var culture = new CultureInfo("pt-BR");
+        var dayName = culture.DateTimeFormat.GetDayName(day);
+        Name = culture.TextInfo.ToTitleCase(dayName.Split('-')[0]);
+        ToggleSelectionCommand = new Command(() => IsSelected = !IsSelected);
+    }
+}
+
 
 [QueryProperty(nameof(ClassScheduleId), "ClassScheduleId")]
 public class ClassScheduleViewModel : BaseViewModel
@@ -12,7 +39,7 @@ public class ClassScheduleViewModel : BaseViewModel
     private readonly ClassScheduleService _classScheduleService;
 
     public ObservableCollection<Class> Classes { get; set; } = new();
-    public ObservableCollection<DayOfWeek> DaysOfWeek { get; set; } = new(System.Enum.GetValues(typeof(DayOfWeek)).Cast<DayOfWeek>());
+    public ObservableCollection<SelectableDay> SelectableDays { get; set; }
 
     private ClassSchedule _currentClassSchedule;
     public ClassSchedule CurrentClassSchedule
@@ -68,6 +95,10 @@ public class ClassScheduleViewModel : BaseViewModel
         SaveClassScheduleCommand = new Command(async () => await SaveClassSchedule());
         DeleteClassScheduleCommand = new Command(async () => await DeleteClassSchedule());
 
+        SelectableDays = new ObservableCollection<SelectableDay>(
+            System.Enum.GetValues(typeof(DayOfWeek)).Cast<DayOfWeek>().Where(d => d != DayOfWeek.Saturday && d != DayOfWeek.Sunday).Select(d => new SelectableDay(d))
+        );
+
         _ = LoadClassesAsync();
         if (ClassScheduleId == 0)
         {
@@ -78,6 +109,10 @@ public class ClassScheduleViewModel : BaseViewModel
     private async Task LoadClassScheduleAsync(int classScheduleId)
     {
         CurrentClassSchedule = await _classScheduleService.GetClassScheduleByIdAsync(classScheduleId);
+        foreach (var day in SelectableDays)
+        {
+            day.IsSelected = day.Day == CurrentClassSchedule.DayOfWeek;
+        }
     }
 
     private async Task LoadClassesAsync()
@@ -96,15 +131,54 @@ public class ClassScheduleViewModel : BaseViewModel
             return;
         }
 
-        CurrentClassSchedule.ClassId = SelectedClass.Id;
+        var selectedDays = SelectableDays.Where(d => d.IsSelected).ToList();
+        if (!selectedDays.Any())
+        {
+            await ShowMessageAsync("Selecione pelo menos um dia da semana.", "Aviso");
+            return;
+        }
 
-        var result = CurrentClassSchedule.Id == 0
-            ? await _classScheduleService.AddClassScheduleAsync(CurrentClassSchedule)
-            : await _classScheduleService.UpdateClassScheduleAsync(CurrentClassSchedule);
+        bool isSuccess = true;
+        string finalMessage;
+        
+        if (CurrentClassSchedule.Id == 0) // Create mode
+        {
+            int successCount = 0;
+            foreach (var day in selectedDays)
+            {
+                var newSchedule = new ClassSchedule
+                {
+                    ClassId = SelectedClass.Id,
+                    ClassTime = CurrentClassSchedule.ClassTime,
+                    DayOfWeek = day.Day
+                };
+                var result = await _classScheduleService.AddClassScheduleAsync(newSchedule);
+                if (result.IsSuccess)
+                {
+                    successCount++;
+                }
+                isSuccess &= result.IsSuccess;
+            }
+            finalMessage = $"{successCount} de {selectedDays.Count} horários salvos com sucesso.";
+        }
+        else // Edit mode
+        {
+            if (selectedDays.Count > 1)
+            {
+                await ShowMessageAsync("A edição só permite alterar para um único dia. Para salvar em múltiplos dias, crie um novo registro.", "Aviso");
+                return;
+            }
 
-        await ShowMessageAsync(result.Message, result.IsSuccess ? "Sucesso" : "Aviso");
+            CurrentClassSchedule.ClassId = SelectedClass.Id;
+            CurrentClassSchedule.DayOfWeek = selectedDays.Single().Day;
+            var result = await _classScheduleService.UpdateClassScheduleAsync(CurrentClassSchedule);
+            isSuccess = result.IsSuccess;
+            finalMessage = result.Message;
+        }
 
-        if (result.IsSuccess)
+        await ShowMessageAsync(finalMessage, isSuccess ? "Sucesso" : "Aviso");
+
+        if (isSuccess)
         {
             await Shell.Current.GoToAsync("..");
         }

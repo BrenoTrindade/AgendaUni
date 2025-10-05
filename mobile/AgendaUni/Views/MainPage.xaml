@@ -89,7 +89,7 @@
         
         <controls:Calendar
             Culture="{Binding Culture}"
-            TodayOutlineColor="{StaticResource Accent}"
+            TodayOutlineColor="{AppThemeBinding Light={StaticResource DarkPrimary}, Dark={StaticResource LightPrimary}}"
             EventIndicatorColor="{AppThemeBinding Light={StaticResource LightPrimaryText}, Dark={StaticResource DarkPrimaryText}}"
             EventIndicatorSelectedColor ="{AppThemeBinding Light={StaticResource LightPrimaryText}, Dark={StaticResource DarkPrimaryText}}"
             SelectedDayBackgroundColor="{AppThemeBinding Light={StaticResource LightTertiary}, Dark={StaticResource DarkTertiary}}"

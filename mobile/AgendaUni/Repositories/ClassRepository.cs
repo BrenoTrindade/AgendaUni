@@ -21,10 +21,12 @@ namespace AgendaUni.Repositories
                                 SELECT 
                                     c.Id, c.ClassName, c.MaximumAbsences,
                                     a.Id AS AbsenceId, a.AbsenceDate, a.AbsenceReason,
-                                    s.Id AS ScheduleId, s.DayOfWeek, s.ClassTime
+                                    s.Id AS ScheduleId, s.DayOfWeek, s.ClassTime,
+                                    e.Id AS EventId, e.EventDate, e.Description
                                 FROM Class c
                                 LEFT JOIN Absence a ON c.Id = a.ClassId
                                 LEFT JOIN ClassSchedule s ON c.Id = s.ClassId
+                                LEFT JOIN Event e ON c.Id = e.ClassId
                                 ORDER BY c.Id, s.DayOfWeek;";
 
             using var reader = await command.ExecuteReaderAsync();
@@ -43,7 +45,8 @@ namespace AgendaUni.Repositories
                         ClassName = reader.GetString(1),
                         MaximumAbsences = reader.GetInt32(2),
                         Absences = new List<Absence>(),
-                        Schedules = new List<ClassSchedule>()
+                        Schedules = new List<ClassSchedule>(),
+                        Events = new List<Event>()
                     };
 
                     classDict[classId] = classItem;
@@ -73,6 +76,23 @@ namespace AgendaUni.Repositories
                             Id = scheduleId,
                             DayOfWeek = (DayOfWeek)reader.GetInt32(7),
                             ClassTime = reader.GetTimeSpan(8),
+                            ClassId = classId
+                        });
+                    }
+                }
+
+                if (!reader.IsDBNull(9))
+                {
+                    var eventId = reader.GetInt32(9);
+
+                    bool alreadyExists = classItem.Events.Any(e => e.Id == eventId);
+                    if (!alreadyExists)
+                    {
+                        classItem.Events.Add(new Event
+                        {
+                            Id = eventId,
+                            EventDate = reader.GetDateTime(10),
+                            Description = reader.GetString(11),
                             ClassId = classId
                         });
                     }

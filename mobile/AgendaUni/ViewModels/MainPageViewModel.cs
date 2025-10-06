@@ -1,3 +1,4 @@
+using AgendaUni.Common.Enums;
 using AgendaUni.Models;
 using AgendaUni.Services;
 using Plugin.Maui.Calendar.Models;
@@ -38,12 +39,7 @@ namespace AgendaUni.ViewModels
             public string Description { get; set; }
             public EventType Type { get; set; }
         }
-        public enum EventType
-        {
-            Absence,
-            ClassSchedule,
-            Event
-        }
+        
         private async void FilterCalendar(string filter)
         {
             Events.Clear();

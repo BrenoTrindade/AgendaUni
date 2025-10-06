@@ -11,7 +11,7 @@
                 <DataTemplate>
                     <ViewCell>
                         <StackLayout Padding="10">
-                            <Label Text="{Binding DayOfWeek}" FontSize="18" />
+                            <Label Text="{Binding DayOfWeekInPortuguese}" FontSize="18" />
                             <Label Text="{Binding ClassTime, StringFormat='{0:HH:mm}'}" FontSize="14" />
                         </StackLayout>
                     </ViewCell>

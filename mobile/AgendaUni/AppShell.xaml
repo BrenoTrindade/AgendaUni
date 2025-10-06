@@ -12,7 +12,7 @@
         Route="MainPage" />
 
     <ShellContent
-        Title="Aulas"
+        Title="Matérias"
         ContentTemplate="{DataTemplate local:ClassListPage}" />
 
     <ShellContent

@@ -10,13 +10,13 @@ namespace AgendaUni.ViewModels
     public class ClassListViewModel : BaseViewModel
     {
         private readonly ClassService _classService;
-        public ObservableCollection<Class> Classes { get; }
+        public ObservableCollection<ClassDisplayViewModel> Classes { get; }
 
         public ICommand AddClassCommand { get; }
         public ICommand EditClassCommand { get; }
 
-        private Class _selectedClass;
-        public Class SelectedClass
+        private ClassDisplayViewModel _selectedClass;
+        public ClassDisplayViewModel SelectedClass
         {
             get => _selectedClass;
             set
@@ -32,9 +32,9 @@ namespace AgendaUni.ViewModels
         public ClassListViewModel(ClassService classService)
         {
             _classService = classService;
-            Classes = new ObservableCollection<Class>();
+            Classes = new ObservableCollection<ClassDisplayViewModel>();
             AddClassCommand = new Command(async () => await GoToClassPage());
-            EditClassCommand = new Command<Class>(async (classObj) => await GoToClassPage(classObj));
+            EditClassCommand = new Command<ClassDisplayViewModel>(async (classObj) => await GoToClassPage(classObj));
 
             LoadClassesCommand = new Command(async () => await LoadClassesAsync());
         }
@@ -47,7 +47,7 @@ namespace AgendaUni.ViewModels
         {
             var classes = await _classService.GetAllClassesAsync();
             if (!classes.Any() && isFirstLoad)
-            {
+            {                
                 await GoToClassPage();
                 isFirstLoad = false;
             }
@@ -56,12 +56,12 @@ namespace AgendaUni.ViewModels
                 Classes.Clear();
                 foreach (var c in classes)
                 {
-                    Classes.Add(c);
+                    Classes.Add(new ClassDisplayViewModel(c));
                 }
             }
         }
 
-        private async Task GoToClassPage(Class classObj = null)
+        private async Task GoToClassPage(ClassDisplayViewModel classObj = null)
         {
             if (classObj != null)
             {

@@ -1,3 +1,4 @@
+using AgendaUni.Common.Enums;
 using System.Globalization;
 
 namespace AgendaUni.Common.Converters
@@ -6,17 +7,17 @@ namespace AgendaUni.Common.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is AgendaUni.ViewModels.MainPageViewModel.EventType eventType)
+            if (value is EventType eventType)
             {
                 switch (eventType)
                 {
-                    case AgendaUni.ViewModels.MainPageViewModel.EventType.Absence:
+                    case EventType.Absence:
                         return Color.FromArgb("#8B0000");
 
-                    case AgendaUni.ViewModels.MainPageViewModel.EventType.ClassSchedule:
+                    case EventType.ClassSchedule:
                         return Color.FromArgb("#2F4F4F");
 
-                    case AgendaUni.ViewModels.MainPageViewModel.EventType.Event:
+                    case EventType.Event:
                         return Color.FromArgb("#556B2F");
 
                     default:

@@ -4,6 +4,7 @@ using AgendaUni.Repositories;
 using AgendaUni.Repositories.Interfaces;
 using AgendaUni.ViewModels;
 using AgendaUni.Views;
+using AgendaUni.Common.Converters;
 
 namespace AgendaUni
 {

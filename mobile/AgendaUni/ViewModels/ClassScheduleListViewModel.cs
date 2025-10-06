@@ -10,13 +10,13 @@ namespace AgendaUni.ViewModels
     public class ClassScheduleListViewModel : BaseViewModel
     {
         private readonly ClassScheduleService _classScheduleService;
-        public ObservableCollection<ClassSchedule> ClassSchedules { get; }
+        public ObservableCollection<ClassScheduleDisplayViewModel> ClassSchedules { get; }
 
         public ICommand AddClassScheduleCommand { get; }
         public ICommand EditClassScheduleCommand { get; }
 
-        private ClassSchedule _selectedClassSchedule;
-        public ClassSchedule SelectedClassSchedule
+        private ClassScheduleDisplayViewModel _selectedClassSchedule;
+        public ClassScheduleDisplayViewModel SelectedClassSchedule
         {
             get => _selectedClassSchedule;
             set
@@ -32,9 +32,9 @@ namespace AgendaUni.ViewModels
         public ClassScheduleListViewModel(ClassScheduleService classScheduleService)
         {
             _classScheduleService = classScheduleService;
-            ClassSchedules = new ObservableCollection<ClassSchedule>();
+            ClassSchedules = new ObservableCollection<ClassScheduleDisplayViewModel>();
             AddClassScheduleCommand = new Command(async () => await GoToClassSchedulePage());
-            EditClassScheduleCommand = new Command<ClassSchedule>(async (classSchedule) => await GoToClassSchedulePage(classSchedule));
+            EditClassScheduleCommand = new Command<ClassScheduleDisplayViewModel>(async (classSchedule) => await GoToClassSchedulePage(classSchedule));
 
             LoadClassSchedulesCommand = new Command(async () => await LoadClassSchedulesAsync());
         }
@@ -56,19 +56,19 @@ namespace AgendaUni.ViewModels
                 ClassSchedules.Clear();
                 foreach (var cs in classSchedules)
                 {
-                    ClassSchedules.Add(cs);
+                    ClassSchedules.Add(new ClassScheduleDisplayViewModel(cs));
                 }
             }
             isFirstLoad = false;
         }
 
-        private async Task GoToClassSchedulePage(ClassSchedule classSchedule = null)
+        private async Task GoToClassSchedulePage(ClassScheduleDisplayViewModel classScheduleVM = null)
         {
-            if (classSchedule != null)
+            if (classScheduleVM != null)
             {
                 var navigationParameters = new Dictionary<string, object>
                 {
-                    { "ClassScheduleId", classSchedule.Id }
+                    { "ClassScheduleId", classScheduleVM.Id }
                 };
                 await Shell.Current.GoToAsync($"{nameof(ClassSchedulePage)}", navigationParameters);
             }

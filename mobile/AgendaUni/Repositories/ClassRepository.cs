@@ -55,13 +55,17 @@ namespace AgendaUni.Repositories
 
                 if (!reader.IsDBNull(3))
                 {
-                    classItem.Absences.Add(new Absence
+                    var absenceId = reader.GetInt32(3);
+                    if (!classItem.Absences.Any(a => a.Id == absenceId))
                     {
-                        Id = reader.GetInt32(3),
-                        AbsenceDate = reader.GetDateTime(4),
-                        AbsenceReason = reader.IsDBNull(5) ? null : reader.GetString(5),
-                        ClassId = classId
-                    });
+                        classItem.Absences.Add(new Absence
+                        {
+                            Id = absenceId,
+                            AbsenceDate = reader.GetDateTime(4),
+                            AbsenceReason = reader.IsDBNull(5) ? null : reader.GetString(5),
+                            ClassId = classId
+                        });
+                    }
                 }
 
                 if (!reader.IsDBNull(6))

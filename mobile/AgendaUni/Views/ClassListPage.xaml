@@ -2,22 +2,93 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AgendaUni.Views.ClassListPage"
              xmlns:viewModels="clr-namespace:AgendaUni.ViewModels"
-             Title="Aulas">
-    <Grid RowDefinitions="*,Auto">
-        <ListView ItemsSource="{Binding Classes}"
-                  SelectedItem="{Binding SelectedClass, Mode=TwoWay}"
-                  RowHeight="60">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Padding="10">
-                            <Label Text="{Binding ClassName}" FontSize="18" />
-                        </StackLayout>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+             xmlns:converters="clr-namespace:AgendaUni.Common.Converters"
+             x:DataType="viewModels:ClassListViewModel"
+             Title="Matérias">
 
-        <Button Grid.Row="1" Text="Adicionar Aula" Command="{Binding AddClassCommand}" Margin="10" />
+    <ContentPage.Resources>
+        <converters:GreaterThanOrEqualConverter x:Key="GreaterThanOrEqualConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*, Auto">
+
+        <CollectionView ItemsSource="{Binding Classes}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedClass, Mode=TwoWay}"
+                        Margin="10">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:ClassDisplayViewModel">
+                    <Border Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#424242}"
+                            StrokeThickness="1"
+                            Padding="15"
+                            Margin="0,0,0,10">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8"/>
+                        </Border.StrokeShape>
+                        <Border.Shadow>
+                            <Shadow Brush="#000000"
+                                    Opacity="0.1"
+                                    Radius="10"
+                                    Offset="5,5"/>
+                        </Border.Shadow>
+
+                        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto"
+                              RowSpacing="8">
+
+                            <Label Grid.Row="0"
+                                   Text="{Binding ClassName}"
+                                   FontSize="20"
+                                   FontAttributes="Bold"/>
+
+                            <Label Grid.Row="1"
+                                   Text="{Binding NextClassInfo}"
+                                   FontSize="14"
+                                   TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}"/>
+                            <Label Grid.Row="2"
+                                   Text="{Binding NextEventInfo}"
+                                   FontSize="14"
+                                   TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}"/>
+                            <Label Grid.Row="3"
+                                   FontSize="12"
+                                   TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}">
+                                <Label.Text>
+                                    <MultiBinding StringFormat="Faltas: {0} de {1}">
+                                        <Binding Path="Absences.Count" />
+                                        <Binding Path="MaximumAbsences" />
+                                    </MultiBinding>
+                                </Label.Text>
+                            </Label>
+
+                            <ProgressBar Grid.Row="4"
+                                         Progress="{Binding AbsencePercentage}"
+                                         HeightRequest="8">
+                                <ProgressBar.Style>
+                                    <Style TargetType="ProgressBar">
+                                        <Setter Property="ProgressColor" Value="#4CAF50" />
+                                        <Style.Triggers>
+                                            <DataTrigger TargetType="ProgressBar"
+                                                         Binding="{Binding AbsencePercentage, Converter={StaticResource GreaterThanOrEqualConverter}, ConverterParameter=0.7}"
+                                                         Value="True">
+                                                <Setter Property="ProgressColor" Value="#FFC107" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="ProgressBar"
+                                                         Binding="{Binding AbsencePercentage, Converter={StaticResource GreaterThanOrEqualConverter}, ConverterParameter=1}"
+                                                         Value="True">
+                                                <Setter Property="ProgressColor" Value="#8B0000" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ProgressBar.Style>
+                            </ProgressBar>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Grid.Row="1"
+                Text="Adicionar Matéria"
+                Command="{Binding AddClassCommand}"
+                Margin="20"/>
     </Grid>
 </ContentPage>

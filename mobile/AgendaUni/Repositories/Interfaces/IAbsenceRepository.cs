@@ -9,5 +9,6 @@ namespace AgendaUni.Repositories.Interfaces
         Task<Absence> GetByIdAsync(int id);
         Task UpdateAsync(Absence absence);
         Task DeleteAsync(int id);
+        Task<IEnumerable<Absence>> GetAbsencesByClassIdAsync(int classId);
     }
 }

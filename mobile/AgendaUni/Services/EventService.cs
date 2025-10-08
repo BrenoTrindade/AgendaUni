@@ -36,6 +36,11 @@ namespace AgendaUni.Services
             return await _eventRepository.GetByIdAsync(id);
         }
 
+        public async Task<IEnumerable<Event>> GetEventsByClassIdAsync(int classId)
+        {
+            return await _eventRepository.GetEventsByClassIdAsync(classId);
+        }
+
 
         public async Task<ServiceResult> UpdateEventAsync(Event ev)
         {

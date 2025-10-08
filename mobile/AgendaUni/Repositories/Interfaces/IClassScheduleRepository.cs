@@ -9,5 +9,6 @@ namespace AgendaUni.Repositories.Interfaces
         Task<ClassSchedule> GetByIdAsync(int id);
         Task UpdateAsync(ClassSchedule classSchedule);
         Task DeleteAsync(int id);
+        Task<IEnumerable<ClassSchedule>> GetSchedulesByClassIdAsync(int classId);
     }
 }

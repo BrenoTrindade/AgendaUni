@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Microsoft.Maui.Controls;
 
 [QueryProperty(nameof(AbsenceId), "AbsenceId")]
+[QueryProperty(nameof(ClassId), "ClassId")]
 public class AbsenceViewModel : BaseViewModel
 {
     private readonly AbsenceService _absenceService;
@@ -23,6 +24,21 @@ public class AbsenceViewModel : BaseViewModel
             if (value != null)
             {
                 SelectedClass = Classes.FirstOrDefault(c => c.Id == value.ClassId);
+            }
+        }
+    }
+
+    private int _classId;
+    public int ClassId
+    {
+        get => _classId;
+        set
+        {
+            _classId = value;
+            if (value > 0 && AbsenceId == 0)
+            {
+                CurrentAbsence.ClassId = value;
+                SelectedClass = Classes.FirstOrDefault(c => c.Id == value);
             }
         }
     }

@@ -33,6 +33,7 @@ public class SelectableDay : BaseViewModel
 
 
 [QueryProperty(nameof(ClassScheduleId), "ClassScheduleId")]
+[QueryProperty(nameof(ClassId), "ClassId")]
 public class ClassScheduleViewModel : BaseViewModel
 {
     private readonly ClassService _classService;
@@ -52,6 +53,21 @@ public class ClassScheduleViewModel : BaseViewModel
             if (value != null)
             {
                 SelectedClass = Classes.FirstOrDefault(c => c.Id == value.ClassId);
+            }
+        }
+    }
+
+    private int _classId;
+    public int ClassId
+    {
+        get => _classId;
+        set
+        {
+            _classId = value;
+            if (value > 0 && ClassScheduleId == 0)
+            {
+                CurrentClassSchedule.ClassId = value;
+                SelectedClass = Classes.FirstOrDefault(c => c.Id == value);
             }
         }
     }

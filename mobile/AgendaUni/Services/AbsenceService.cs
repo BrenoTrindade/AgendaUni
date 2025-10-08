@@ -36,6 +36,11 @@ namespace AgendaUni.Services
             return await _absenceRepository.GetByIdAsync(id);
         }
 
+        public async Task<IEnumerable<Absence>> GetAbsencesByClassIdAsync(int classId)
+        {
+            return await _absenceRepository.GetAbsencesByClassIdAsync(classId);
+        }
+
 
         public async Task<ServiceResult> UpdateAbsenceAsync(Absence absence)
         {

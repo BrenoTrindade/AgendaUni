@@ -39,6 +39,11 @@ namespace AgendaUni.Services
             return await _classScheduleRepository.GetByIdAsync(id);
         }
 
+        public async Task<IEnumerable<ClassSchedule>> GetSchedulesByClassIdAsync(int classId)
+        {
+            return await _classScheduleRepository.GetSchedulesByClassIdAsync(classId);
+        }
+
 
         public async Task<ServiceResult> UpdateClassScheduleAsync(ClassSchedule classSchedule)
         {

@@ -101,5 +101,27 @@ namespace AgendaUni.Repositories
             command.Parameters.AddWithValue("$id", id);
             await command.ExecuteNonQueryAsync();
         }
+
+        public async Task<IEnumerable<ClassSchedule>> GetSchedulesByClassIdAsync(int classId)
+        {
+            var schedules = new List<ClassSchedule>();
+            using var connection = _context.GetConnection();
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            command.CommandText = @"SELECT Id, ClassId, DayOfWeek, ClassTime FROM ClassSchedule WHERE ClassId = $classId;";
+            command.Parameters.AddWithValue("$classId", classId);
+            using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                schedules.Add(new ClassSchedule
+                {
+                    Id = reader.GetInt32(0),
+                    ClassId = reader.GetInt32(1),
+                    DayOfWeek = (DayOfWeek)reader.GetInt32(2),
+                    ClassTime = reader.GetTimeSpan(3)
+                });
+            }
+            return schedules;
+        }
     }
 }

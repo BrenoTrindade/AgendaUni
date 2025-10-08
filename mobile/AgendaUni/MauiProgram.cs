@@ -47,20 +47,12 @@ namespace AgendaUni
             builder.Services.AddTransient<ClassScheduleViewModel>();
             builder.Services.AddTransient<ClassSchedulePage>();
 
-            builder.Services.AddTransient<ClassScheduleListViewModel>();
-            builder.Services.AddTransient<ClassScheduleListPage>();
-
             builder.Services.AddTransient<AbsenceViewModel>();
             builder.Services.AddTransient<AbsencePage>();
 
-            builder.Services.AddTransient<AbsenceListViewModel>();
-            builder.Services.AddTransient<AbsenceListPage>();
 
             builder.Services.AddTransient<EventViewModel>();
             builder.Services.AddTransient<EventPage>();
-
-            builder.Services.AddTransient<EventListViewModel>();
-            builder.Services.AddTransient<EventListPage>();
 
             builder.Services.AddTransient<MainPageViewModel>();
             builder.Services.AddTransient<MainPage>();

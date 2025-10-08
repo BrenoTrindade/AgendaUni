@@ -126,7 +126,7 @@ namespace AgendaUni.Repositories
             return null;
         }
 
-        public async Task AddAsync(Class classObj)
+        public async Task<Class> AddAsync(Class classObj)
         {
             using var connection = _context.GetConnection();
             await connection.OpenAsync();
@@ -139,7 +139,11 @@ namespace AgendaUni.Repositories
             command.Parameters.AddWithValue("$className", classObj.ClassName);
             command.Parameters.AddWithValue("$maximumAbsences", classObj.MaximumAbsences);
 
-            await command.ExecuteScalarAsync();
+            var newId = (long)await command.ExecuteScalarAsync();
+            
+            classObj.Id = (int)newId;
+
+            return classObj;
         }
 
         public async Task UpdateAsync(Class classObj)

@@ -48,7 +48,7 @@ namespace AgendaUni.ViewModels
             set
             {
                 SetProperty(ref _currentClass, value);
-                Title = value?.Id == 0 ? "Registrar Matéria " : "Gerenciar Matéria ";
+                Title = value?.Id == 0 ? "Registrar Matéria" : $"Gerenciar Matéria";
             }
         }
 
@@ -90,7 +90,7 @@ namespace AgendaUni.ViewModels
             DeleteEventCommand = new Command(async (param) => await DeleteEvent((int)param));
 
             GoToAbsenceDetailsCommand = new Command(async (param) => await GoToAbsenceDetails(param as Absence));
-            GoToScheduleDetailsCommand = new Command(async (param) => await GoToScheduleDetails(param as ClassSchedule));
+            GoToScheduleDetailsCommand = new Command(async (param) => await GoToScheduleDetails(param as ClassScheduleDisplayViewModel));
             GoToEventDetailsCommand = new Command(async (param) => await GoToEventDetails(param as Event));
 
 
@@ -100,10 +100,20 @@ namespace AgendaUni.ViewModels
                 AbsencesSummary = $@"Faltas";
             }
         }
-
         private async Task LoadClassAsync(int classId)
         {
-            CurrentClass = await _classService.GetClassByIdAsync(classId);
+            var classToLoad = await _classService.GetClassByIdAsync(classId);
+
+            if (classToLoad != null)
+            {
+                await LoadRelatedClassDataAsync(classToLoad);
+            }
+        }
+        private async Task LoadRelatedClassDataAsync(Class classObj)
+        {
+            CurrentClass = classObj;
+
+            var classId = classObj.Id;
 
             Absences.Clear();
             var absences = await _absenceService.GetAbsencesByClassIdAsync(classId);
@@ -136,10 +146,24 @@ namespace AgendaUni.ViewModels
                 if (CurrentClass == null)
                     return;
 
+                if (string.IsNullOrWhiteSpace(CurrentClass.ClassName))
+                {
+                    await ShowMessageAsync("O nome da matéria é obrigatório.", "Aviso");
+                    return;
+                }
+
+                if (CurrentClass.MaximumAbsences <= 0)
+                {
+                    await ShowMessageAsync("O máximo de faltas é obrigatório e deve ser maior que zero.", "Aviso");
+                    return;
+                }
+
                 if (CurrentClass.Id == 0)
                 {
-                    await _classService.AddClassAsync(CurrentClass);
+                    var result = await _classService.AddClassAsync(CurrentClass);
+                    var savedClass = result.Data;
                     await ShowMessageAsync("Aula cadastrada com sucesso!", "Sucesso");
+                    ClassId = savedClass.Id;
                 }
                 else
                 {
@@ -185,11 +209,11 @@ namespace AgendaUni.ViewModels
                 await _eventService.DeleteEventAsync(eventId);
                 await ShowMessageAsync("Evento excluído com sucesso!", "Sucesso");
 
-                var eventToRemove = Schedules.FirstOrDefault(s => s.Id == eventId);
+                var eventToRemove = Events.FirstOrDefault(s => s.Id == eventId);
 
                 if (eventToRemove != null)
                 {
-                    Schedules.Remove(eventToRemove);
+                    Events.Remove(eventToRemove);
                 }
             }
         }
@@ -239,6 +263,7 @@ namespace AgendaUni.ViewModels
                 if (absenceToRemove != null)
                 {
                     Absences.Remove(absenceToRemove);
+                    AbsencesSummary = $@"Faltas {Absences?.Count ?? 0}/{CurrentClass?.MaximumAbsences ?? 0}";
                 }
 
             }
@@ -267,7 +292,7 @@ namespace AgendaUni.ViewModels
             await Shell.Current.GoToAsync($"AbsencePage?AbsenceId={absence.Id}");
         }
 
-        private async Task GoToScheduleDetails(ClassSchedule schedule)
+        private async Task GoToScheduleDetails(ClassScheduleDisplayViewModel schedule)
         {
             if (schedule == null)
                 return;

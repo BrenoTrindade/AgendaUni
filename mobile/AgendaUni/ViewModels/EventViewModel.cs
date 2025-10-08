@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Microsoft.Maui.Controls;
 
 [QueryProperty(nameof(EventId), "EventId")]
+[QueryProperty(nameof(ClassId), "ClassId")]
 public class EventViewModel : BaseViewModel
 {
     private readonly EventService _eventService;
@@ -23,6 +24,21 @@ public class EventViewModel : BaseViewModel
             if (value != null)
             {
                 SelectedClass = Classes.FirstOrDefault(c => c.Id == value.ClassId);
+            }
+        }
+    }
+
+    private int _classId;
+    public int ClassId
+    {
+        get => _classId;
+        set
+        {
+            _classId = value;
+            if (value > 0 && EventId == 0)
+            {
+                CurrentEvent.ClassId = value;
+                SelectedClass = Classes.FirstOrDefault(c => c.Id == value);
             }
         }
     }

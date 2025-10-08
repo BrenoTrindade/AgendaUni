@@ -17,15 +17,15 @@
 
     <ShellContent
         Title="Horários"
-        ContentTemplate="{DataTemplate local:ClassScheduleListPage}" />
+        ContentTemplate="{DataTemplate local:ClassSchedulePage}" />
 
     <ShellContent
         Title="Faltas"
-        ContentTemplate="{DataTemplate local:AbsenceListPage}" />
+        ContentTemplate="{DataTemplate local:AbsencePage}" /> 
 
     <ShellContent
         Title="Eventos"
-        ContentTemplate="{DataTemplate local:EventListPage}" />
+        ContentTemplate="{DataTemplate local:EventPage}" />
 
     <Shell.ToolbarItems>
         <ToolbarItem Clicked="OnThemeClicked"

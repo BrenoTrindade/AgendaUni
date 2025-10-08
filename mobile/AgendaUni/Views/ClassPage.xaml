@@ -1,39 +1,202 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AgendaUni.Views.ClassPage"
+             xmlns:models="clr-namespace:AgendaUni.Models"
+             xmlns:viewmodels="clr-namespace:AgendaUni.ViewModels"
+             x:DataType="viewmodels:ClassViewModel"
              Title="{Binding Title}">
 
-    <VerticalStackLayout Padding="20" Spacing="15">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
 
-        <VerticalStackLayout>
-            <Label Text="Nome"
-               FontAttributes="Bold"
-               FontSize="14"
-               Margin="0,5,0,2" />
-            <Entry Placeholder="Digite o nome da aula"
-               Text="{Binding CurrentClass.ClassName}" />
+            <!-- Detalhes da Matéria -->
+            <Frame Padding="15" CornerRadius="10" BorderColor="LightGray" HasShadow="True">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Nome"
+                           FontAttributes="Bold"
+                           FontSize="14" />
+                    <Entry Placeholder="Digite o nome da aula"
+                           Text="{Binding CurrentClass.ClassName}" />
+
+                    <Label Text="Máximo de Faltas"
+                           FontAttributes="Bold"
+                           FontSize="14"
+                           Margin="0,5,0,0" />
+                    <Entry Placeholder="Ex: 3"
+                           Keyboard="Numeric"
+                           IsTextPredictionEnabled="False"
+                           IsSpellCheckEnabled="False"
+                           Text="{Binding CurrentClass.MaximumAbsences}" />
+
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0"
+                        Text="Salvar"
+                        Command="{Binding SaveClassCommand}" />
+                        <Button Grid.Column="1"
+                        Text="Excluir"
+                        Command="{Binding DeleteClassCommand}"
+                        BackgroundColor="DarkRed"
+                        TextColor="White" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+
+            <Frame Padding="10" CornerRadius="10" BorderColor="LightGray" HasShadow="True">
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*, Auto">
+                        <Label Grid.Column="0" Text="{Binding AbsencesSummary }" FontAttributes="Bold" FontSize="18" VerticalOptions="Center" />
+                        <Button Grid.Column="1" ImageSource="add.png" Command="{Binding AddAbsenceCommand}" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="LightGray" />
+
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Absences}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:Absence">
+                                <Frame Padding="10" Margin="0,5" CornerRadius="5" BorderColor="Gainsboro">
+
+                                    <Grid ColumnDefinitions="*, Auto">
+                                        <VerticalStackLayout >
+                                            <Label Text="{Binding AbsenceDate, StringFormat='Dia: {0:d}'}" FontAttributes="Bold"/>
+                                            <HorizontalStackLayout Spacing="10">
+                                                <Label Text="{Binding AbsenceReason, StringFormat='Motivo: {0}'}" />
+                                            </HorizontalStackLayout>
+                                        </VerticalStackLayout>
+
+                                        <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                            <Button
+                                                ImageSource="edit.png" 
+                                                WidthRequest="40"
+                                                HeightRequest="40"
+                                                Padding="8"
+                                                CornerRadius="20"
+                                                BackgroundColor="Transparent"
+                                                BorderColor="Transparent"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ClassViewModel}}, Path=GoToAbsenceDetailsCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                            <Button
+                                                ImageSource="delete.svg" 
+                                                WidthRequest="40"
+                                                HeightRequest="40"
+                                                Padding="8"
+                                                CornerRadius="20"
+                                                BackgroundColor="Transparent"
+                                                BorderColor="Transparent"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ClassViewModel}}, Path=DeleteAbsenceCommand}"
+                                                CommandParameter="{Binding Id}"/>
+
+                                        </HorizontalStackLayout>
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame Padding="10" CornerRadius="10" BorderColor="LightGray" HasShadow="True">
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*, Auto">
+                        <Label Grid.Column="0" Text="Horários" FontAttributes="Bold" FontSize="18" VerticalOptions="Center" />
+                        <Button Grid.Column="1" ImageSource="add.png" Command="{Binding AddScheduleCommand}" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="LightGray" />
+
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Schedules}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="viewmodels:ClassScheduleDisplayViewModel">
+                                <Frame Padding="10" Margin="0,5" CornerRadius="5" BorderColor="Gainsboro">
+
+                                    <Grid ColumnDefinitions="*, Auto">
+                                        <VerticalStackLayout>
+                                            <Label Text="{Binding DayOfWeekInPortuguese}" FontAttributes="Bold"/>
+                                            <HorizontalStackLayout Spacing="10">
+                                                <Label Text="{Binding ClassTime, StringFormat='Início: {0:t}'}" />
+                                            </HorizontalStackLayout>
+                                        </VerticalStackLayout>
+
+
+                                        <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                            <Button
+                                                ImageSource="edit.png" 
+                                                WidthRequest="40"
+                                                HeightRequest="40"
+                                                Padding="8"
+                                                CornerRadius="20"
+                                                BackgroundColor="Transparent"
+                                                BorderColor="Transparent"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ClassViewModel}}, Path=GoToSchedulesDetailsCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                            <Button 
+                                                ImageSource="delete.svg" 
+                                                WidthRequest="40"
+                                                HeightRequest="40"
+                                                Padding="8"
+                                                CornerRadius="20"
+                                                BackgroundColor="Transparent"
+                                                BorderColor="Transparent"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ClassViewModel}}, Path=DeleteScheduleCommand}"
+                                                CommandParameter="{Binding Id}"/>
+                                        </HorizontalStackLayout>
+                                    </Grid>
+
+                                </Frame>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+            
+            <Frame Padding="10" CornerRadius="10" BorderColor="LightGray" HasShadow="True">
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*, Auto">
+                        <Label Grid.Column="0" Text="Eventos" FontAttributes="Bold" FontSize="18" VerticalOptions="Center" />
+                        <Button Grid.Column="1" ImageSource="add.png" Command="{Binding AddEventCommand}" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="LightGray" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Events}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:Event">
+                                <Frame Padding="10" Margin="0,5" CornerRadius="5" BorderColor="Gainsboro">
+                                    <Grid ColumnDefinitions="*, Auto">
+                                        <VerticalStackLayout>
+                                            <Label Text="{Binding Description}" FontAttributes="Bold" />
+                                            <HorizontalStackLayout>
+                                                <Label Text="{Binding EventDate, StringFormat='{0:d}'}" />
+                                            </HorizontalStackLayout>
+                                        </VerticalStackLayout>
+
+                                        <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                            <Button
+                                                ImageSource="edit.png" 
+                                                WidthRequest="40"
+                                                HeightRequest="40"
+                                                Padding="8"
+                                                CornerRadius="20"
+                                                BackgroundColor="Transparent"
+                                                BorderColor="Transparent"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ClassViewModel}}, Path=GoToEventDetailsCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                            <Button 
+                                                ImageSource="delete.svg" 
+                                                WidthRequest="40"
+                                                HeightRequest="40"
+                                                Padding="8"
+                                                CornerRadius="20"
+                                                BackgroundColor="Transparent"
+                                                BorderColor="Transparent"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ClassViewModel}}, Path=DeleteScheduleCommand}"
+                                                CommandParameter="{Binding Id}"/>
+                                        </HorizontalStackLayout>
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
         </VerticalStackLayout>
-
-        <VerticalStackLayout>
-            <Label Text="Máximo de Faltas"
-               FontAttributes="Bold"
-               FontSize="14"
-               Margin="0,5,0,2" />
-            <Entry Placeholder="Ex: 3"
-               Keyboard="Numeric"
-               IsTextPredictionEnabled="False"
-               IsSpellCheckEnabled="False"
-               Text="{Binding CurrentClass.MaximumAbsences}" />
-        </VerticalStackLayout>
-
-        <Button Text="Salvar"
-                    Command="{Binding SaveClassCommand}" />
-
-        <Button Text="Excluir"
-                Command="{Binding DeleteClassCommand}"
-                BackgroundColor="DarkRed"
-                TextColor="White"
-                Margin="0,10,0,0" />
-
-    </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

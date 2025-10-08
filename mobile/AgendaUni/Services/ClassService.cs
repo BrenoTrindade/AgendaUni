@@ -26,10 +26,10 @@ namespace AgendaUni.Services
         public async Task<ServiceResult<Class>> AddClassAsync(Class classObj)
         {
             if (string.IsNullOrWhiteSpace(classObj.ClassName))
-                return (ServiceResult<Class>)ServiceResult.Failure("Informe o nome da aula.");
+                return ServiceResult<Class>.Failure("Informe o nome da aula.");
             
             if (classObj.MaximumAbsences < 0)
-                return (ServiceResult<Class>)ServiceResult.Failure("Informe a quantidade de faltas.");
+                return ServiceResult<Class>.Failure("Informe a quantidade de faltas.");
 
             var savedClass = await _classRepository.AddAsync(classObj);
 

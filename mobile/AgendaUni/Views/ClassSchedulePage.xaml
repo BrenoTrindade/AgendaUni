@@ -45,14 +45,14 @@
                                 <DataTrigger TargetType="Button"
                                              Binding="{Binding IsSelected}"
                                              Value="True">
-                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
-                                    <Setter Property="TextColor" Value="White" />
+                                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource DarkTertiary}, Dark={StaticResource LightTertiary}}" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource LightTertiary}, Dark={StaticResource DarkTertiary}}" />
                                 </DataTrigger>
                                 <DataTrigger TargetType="Button"
                                              Binding="{Binding IsSelected}"
                                              Value="False">
-                                    <Setter Property="BackgroundColor" Value="LightGray" />
-                                    <Setter Property="TextColor" Value="Black" />
+                                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource LightTertiary}, Dark={StaticResource DarkSecondary}}" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource LightPrimaryText}, Dark={StaticResource DarkPrimaryText}}" />
                                 </DataTrigger>
                             </Button.Triggers>
                         </Button>

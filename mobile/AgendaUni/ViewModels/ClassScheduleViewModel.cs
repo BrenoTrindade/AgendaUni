@@ -118,7 +118,7 @@ public class ClassScheduleViewModel : BaseViewModel
         _ = LoadClassesAsync();
         if (ClassScheduleId == 0)
         {
-            CurrentClassSchedule = new ClassSchedule();
+            CurrentClassSchedule = new ClassSchedule { ClassTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 0) };
         }
     }
 

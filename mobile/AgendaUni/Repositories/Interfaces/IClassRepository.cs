@@ -6,7 +6,7 @@ namespace AgendaUni.Repositories.Interfaces
     {
         Task<List<Class>> GetAllAsync();
         Task<Class> GetByIdAsync(int id);
-        Task AddAsync(Class classObj);
+        Task<Class> AddAsync(Class classObj);
         Task UpdateAsync(Class classObj);
         Task DeleteAsync(int id);
     }

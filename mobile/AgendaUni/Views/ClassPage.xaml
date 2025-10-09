@@ -3,14 +3,21 @@
              x:Class="AgendaUni.Views.ClassPage"
              xmlns:models="clr-namespace:AgendaUni.Models"
              xmlns:viewmodels="clr-namespace:AgendaUni.ViewModels"
+             xmlns:converters="clr-namespace:AgendaUni.Common.Converters"
              x:DataType="viewmodels:ClassViewModel"
              Title="{Binding Title}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:GreaterThanOrEqualConverter x:Key="GreaterThanOrEqualConverter" />
+            <converters:ZeroToEmptyStringConverter x:Key="ZeroToEmptyStringConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
 
-            <!-- Detalhes da Matéria -->
-            <Frame Padding="15" CornerRadius="10" BorderColor="LightGray" HasShadow="True">
+            <Frame Padding="15" CornerRadius="10" BorderColor="Gray" HasShadow="True">
                 <VerticalStackLayout Spacing="10">
                     <Label Text="Nome"
                            FontAttributes="Bold"
@@ -26,35 +33,44 @@
                            Keyboard="Numeric"
                            IsTextPredictionEnabled="False"
                            IsSpellCheckEnabled="False"
-                           Text="{Binding CurrentClass.MaximumAbsences}" />
-
-
+                           Text="{Binding CurrentClass.MaximumAbsences, Converter={StaticResource ZeroToEmptyStringConverter}}" />
+                
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                        <Button Grid.Column="0"
-                        Text="Salvar"
-                        Command="{Binding SaveClassCommand}" />
+                        <Button Command="{Binding SaveClassCommand}" Text="Salvar">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Grid.Column" Value="0" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CurrentClass.Id, Converter={StaticResource GreaterThanOrEqualConverter}, ConverterParameter=1}" TargetType="Button" Value="False">
+                                            <Setter Property="Grid.ColumnSpan" Value="2" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                         <Button Grid.Column="1"
                         Text="Excluir"
                         Command="{Binding DeleteClassCommand}"
                         BackgroundColor="DarkRed"
-                        TextColor="White" />
+                        TextColor="White"
+                        IsVisible="{Binding CurrentClass.Id, Converter={StaticResource GreaterThanOrEqualConverter}, ConverterParameter=1}" />
                     </Grid>
                 </VerticalStackLayout>
             </Frame>
 
 
-            <Frame Padding="10" CornerRadius="10" BorderColor="LightGray" HasShadow="True">
+            <Frame Padding="10" CornerRadius="10" BorderColor="Gray" HasShadow="True" IsVisible="{Binding CurrentClass.Id, Converter={StaticResource GreaterThanOrEqualConverter}, ConverterParameter=1}">
                 <VerticalStackLayout Spacing="10">
                     <Grid ColumnDefinitions="*, Auto">
                         <Label Grid.Column="0" Text="{Binding AbsencesSummary }" FontAttributes="Bold" FontSize="18" VerticalOptions="Center" />
                         <Button Grid.Column="1" ImageSource="add.png" Command="{Binding AddAbsenceCommand}" />
                     </Grid>
-                    <BoxView HeightRequest="1" Color="LightGray" />
+                    <BoxView HeightRequest="1" Color="Gray" />
 
                     <VerticalStackLayout BindableLayout.ItemsSource="{Binding Absences}">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="models:Absence">
-                                <Frame Padding="10" Margin="0,5" CornerRadius="5" BorderColor="Gainsboro">
+                                <Frame Padding="10" Margin="0,5" CornerRadius="5" BorderColor="Gray">
 
                                     <Grid ColumnDefinitions="*, Auto">
                                         <VerticalStackLayout >
@@ -95,18 +111,18 @@
                 </VerticalStackLayout>
             </Frame>
 
-            <Frame Padding="10" CornerRadius="10" BorderColor="LightGray" HasShadow="True">
+            <Frame Padding="10" CornerRadius="10" BorderColor="Gray" HasShadow="True" IsVisible="{Binding CurrentClass.Id, Converter={StaticResource GreaterThanOrEqualConverter}, ConverterParameter=1}">
                 <VerticalStackLayout Spacing="10">
                     <Grid ColumnDefinitions="*, Auto">
                         <Label Grid.Column="0" Text="Horários" FontAttributes="Bold" FontSize="18" VerticalOptions="Center" />
                         <Button Grid.Column="1" ImageSource="add.png" Command="{Binding AddScheduleCommand}" />
                     </Grid>
-                    <BoxView HeightRequest="1" Color="LightGray" />
+                    <BoxView HeightRequest="1" Color="Gray" />
 
                     <VerticalStackLayout BindableLayout.ItemsSource="{Binding Schedules}">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="viewmodels:ClassScheduleDisplayViewModel">
-                                <Frame Padding="10" Margin="0,5" CornerRadius="5" BorderColor="Gainsboro">
+                                <Frame Padding="10" Margin="0,5" CornerRadius="5" BorderColor="Gray">
 
                                     <Grid ColumnDefinitions="*, Auto">
                                         <VerticalStackLayout>
@@ -115,7 +131,6 @@
                                                 <Label Text="{Binding ClassTime, StringFormat='Início: {0:t}'}" />
                                             </HorizontalStackLayout>
                                         </VerticalStackLayout>
-
 
                                         <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
                                             <Button
@@ -126,7 +141,7 @@
                                                 CornerRadius="20"
                                                 BackgroundColor="Transparent"
                                                 BorderColor="Transparent"
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ClassViewModel}}, Path=GoToSchedulesDetailsCommand}"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ClassViewModel}}, Path=GoToScheduleDetailsCommand}"
                                                 CommandParameter="{Binding .}"/>
                                             <Button 
                                                 ImageSource="delete.svg" 
@@ -147,18 +162,18 @@
                     </VerticalStackLayout>
                 </VerticalStackLayout>
             </Frame>
-            
-            <Frame Padding="10" CornerRadius="10" BorderColor="LightGray" HasShadow="True">
+
+            <Frame Padding="10" CornerRadius="10" BorderColor="Gray" HasShadow="True" IsVisible="{Binding CurrentClass.Id, Converter={StaticResource GreaterThanOrEqualConverter}, ConverterParameter=1}">
                 <VerticalStackLayout Spacing="10">
                     <Grid ColumnDefinitions="*, Auto">
                         <Label Grid.Column="0" Text="Eventos" FontAttributes="Bold" FontSize="18" VerticalOptions="Center" />
                         <Button Grid.Column="1" ImageSource="add.png" Command="{Binding AddEventCommand}" />
                     </Grid>
-                    <BoxView HeightRequest="1" Color="LightGray" />
+                    <BoxView HeightRequest="1" Color="Gray" />
                     <VerticalStackLayout BindableLayout.ItemsSource="{Binding Events}">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="models:Event">
-                                <Frame Padding="10" Margin="0,5" CornerRadius="5" BorderColor="Gainsboro">
+                                <Frame Padding="10" Margin="0,5" CornerRadius="5" BorderColor="Gray">
                                     <Grid ColumnDefinitions="*, Auto">
                                         <VerticalStackLayout>
                                             <Label Text="{Binding Description}" FontAttributes="Bold" />
@@ -186,7 +201,7 @@
                                                 CornerRadius="20"
                                                 BackgroundColor="Transparent"
                                                 BorderColor="Transparent"
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ClassViewModel}}, Path=DeleteScheduleCommand}"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ClassViewModel}}, Path=DeleteEventCommand}"
                                                 CommandParameter="{Binding Id}"/>
                                         </HorizontalStackLayout>
                                     </Grid>

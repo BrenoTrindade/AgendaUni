@@ -12,6 +12,15 @@ public partial class ClassPage : ContentPage
         BindingContext = viewModel;
     }
 
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        if (BindingContext is ClassViewModel vm && vm.ClassId > 0)
+        {
+            vm.ClassId = vm.ClassId;
+        }
+    }
+
     public Class Class
     {
         set
@@ -19,4 +28,5 @@ public partial class ClassPage : ContentPage
             (BindingContext as ClassViewModel).CurrentClass = value;
         }
     }
+
 }

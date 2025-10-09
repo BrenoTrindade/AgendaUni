@@ -26,7 +26,7 @@ namespace AgendaUni.Tests
         {
             // Arrange
             var newClass = new Class { ClassName = "Math", MaximumAbsences = 3 };
-            _mockClassRepository.Setup(repo => repo.AddAsync(newClass)).Returns(Task.CompletedTask);
+            _mockClassRepository.Setup(repo => repo.AddAsync(newClass)).ReturnsAsync(newClass);
 
             // Act
             var result = await _classService.AddClassAsync(newClass);

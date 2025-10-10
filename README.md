@@ -15,15 +15,19 @@ Organize sua vida acadêmica com praticidade! O AgendaUni é um aplicativo mobil
 - [ ] Versão web
 
 # 📷 Screenshots
-<img width="385" height="548" alt="image" src="https://github.com/user-attachments/assets/ea9a9bb9-1a87-48c6-9958-841429370ed6" /> <br>
+<img width="381" height="552" alt="image" src="https://github.com/user-attachments/assets/fe6fa44f-4530-4dce-ae08-9d2aa6015f2c" /> <br>
 
-<img width="384" height="334" alt="image" src="https://github.com/user-attachments/assets/3feffc9f-4e0c-4dde-b4ee-38b943e34661" /> <br>
+<img width="384" height="389" alt="image" src="https://github.com/user-attachments/assets/4e52e278-485f-433b-8b5a-a181979b9b7c" /> <br>
 
-<img width="387" height="403" alt="image" src="https://github.com/user-attachments/assets/8c77de10-992e-4227-8398-0add91ac11d2" /> <br>
+<img width="387" height="786" alt="image" src="https://github.com/user-attachments/assets/077184c0-71f3-417b-85de-fabaaa09b638" /> <br>
 
-<img width="384" height="403" alt="image" src="https://github.com/user-attachments/assets/17427d16-6875-4ace-8531-45c888231e6c" /> <br>
+<img width="382" height="312" alt="image" src="https://github.com/user-attachments/assets/d3d9de06-d530-4c7a-be83-3ccf4b61e1c8" /> <br>
 
-<img width="383" height="410" alt="image" src="https://github.com/user-attachments/assets/9ef27ced-9921-47ad-9749-2ead516cb32c" />
+<img width="385" height="436" alt="image" src="https://github.com/user-attachments/assets/9ffa66c5-89d1-4a05-8374-1ce56a1ed4f2" /> <br>
+
+<img width="382" height="511" alt="image" src="https://github.com/user-attachments/assets/fc6b534c-79a0-4332-920e-818acabbeb44" /> <br>
+
+<img width="385" height="432" alt="image" src="https://github.com/user-attachments/assets/4c1ed0cf-6a6d-4050-99d7-dce9fe08633c" />
 
 
 # 🔧 Instalação

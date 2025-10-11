@@ -29,7 +29,7 @@ namespace AgendaUni.ViewModels
             _absenceService = absenceService;
             _classScheduleService = classScheduleService;
             _eventService = eventService;
-            Events = new Plugin.Maui.Calendar.Models.EventCollection();
+            Events = new EventCollection();
             FilterCalendarCommand = new Command<string>(FilterCalendar);
         }
         

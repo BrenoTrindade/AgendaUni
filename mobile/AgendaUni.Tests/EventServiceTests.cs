@@ -14,12 +14,16 @@ namespace AgendaUni.Tests
     public class EventServiceTests
     {
         private readonly Mock<IEventRepository> _mockEventRepository;
+        private readonly Mock<IClassRepository> _mockClassRepository;
+        private readonly Mock<NotificationService> _mockNotificationService;
         private readonly EventService _eventService;
 
         public EventServiceTests()
         {
             _mockEventRepository = new Mock<IEventRepository>();
-            _eventService = new EventService(_mockEventRepository.Object);
+            _mockClassRepository = new Mock<IClassRepository>();
+            _mockNotificationService = new Mock<NotificationService>();
+            _eventService = new EventService(_mockEventRepository.Object, _mockClassRepository.Object, _mockNotificationService.Object);
         }
 
         [Fact]
@@ -27,7 +31,12 @@ namespace AgendaUni.Tests
         {
             // Arrange
             var newEvent = new Event { ClassId = 1, EventDate = DateTime.Now, Description = "Reunião" };
-            _mockEventRepository.Setup(repo => repo.AddAsync(newEvent)).Returns(Task.CompletedTask);
+            var classToReturn = new Class { Id = 1, ClassName = "Test Class" };
+            var notificationIds = new List<int> { 1, 2, 3 };
+
+            _mockClassRepository.Setup(repo => repo.GetByIdAsync(newEvent.ClassId)).ReturnsAsync(classToReturn);
+            _mockNotificationService.Setup(service => service.ScheduleNotificationForEvent(newEvent, classToReturn)).ReturnsAsync(notificationIds);
+            _mockEventRepository.Setup(repo => repo.AddAsync(newEvent, notificationIds)).Returns(Task.CompletedTask);
 
             // Act
             var result = await _eventService.AddEventAsync(newEvent);
@@ -35,7 +44,7 @@ namespace AgendaUni.Tests
             // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal("Evento registrado com sucesso.", result.Message);
-            _mockEventRepository.Verify(repo => repo.AddAsync(newEvent), Times.Once);
+            _mockEventRepository.Verify(repo => repo.AddAsync(newEvent, notificationIds), Times.Once);
         }
 
         [Fact]
@@ -50,7 +59,7 @@ namespace AgendaUni.Tests
             // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal("Selecione uma aula.", result.Message);
-            _mockEventRepository.Verify(repo => repo.AddAsync(It.IsAny<Event>()), Times.Never);
+            _mockEventRepository.Verify(repo => repo.AddAsync(It.IsAny<Event>(), It.IsAny<IEnumerable<int>>()), Times.Never);
         }
 
         [Fact]
@@ -65,7 +74,7 @@ namespace AgendaUni.Tests
             // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal("Informe a descrição do evento.", result.Message);
-            _mockEventRepository.Verify(repo => repo.AddAsync(It.IsAny<Event>()), Times.Never);
+            _mockEventRepository.Verify(repo => repo.AddAsync(It.IsAny<Event>(), It.IsAny<IEnumerable<int>>()), Times.Never);
         }
 
         [Fact]
@@ -73,6 +82,14 @@ namespace AgendaUni.Tests
         {
             // Arrange
             var eventToUpdate = new Event { Id = 1, ClassId = 1, Description = "Updated Description" };
+            var existingEvent = new Event { Id = 1, ClassId = 1, Description = "Old Description", NotificationIds = new List<EventNotification> { new EventNotification { NotificationId = 1 } } };
+            var classToReturn = new Class { Id = 1, ClassName = "Test Class" };
+            var notificationIds = new List<int> { 2, 3, 4 };
+
+            _mockEventRepository.Setup(repo => repo.GetByIdAsync(eventToUpdate.Id)).ReturnsAsync(existingEvent);
+            _mockClassRepository.Setup(repo => repo.GetByIdAsync(eventToUpdate.ClassId)).ReturnsAsync(classToReturn);
+            _mockNotificationService.Setup(service => service.ScheduleNotificationForEvent(eventToUpdate, classToReturn)).ReturnsAsync(notificationIds);
+            _mockEventRepository.Setup(repo => repo.UpdateAsync(eventToUpdate, notificationIds)).Returns(Task.CompletedTask);
 
             // Act
             var result = await _eventService.UpdateEventAsync(eventToUpdate);
@@ -80,7 +97,8 @@ namespace AgendaUni.Tests
             // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal("Evento atualizado com sucesso.", result.Message);
-            _mockEventRepository.Verify(r => r.UpdateAsync(eventToUpdate), Times.Once);
+            _mockNotificationService.Verify(service => service.CancelNotification(1), Times.Once);
+            _mockEventRepository.Verify(r => r.UpdateAsync(eventToUpdate, notificationIds), Times.Once);
         }
 
         [Fact]
@@ -95,7 +113,7 @@ namespace AgendaUni.Tests
             // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal("Informe a descrição do evento.", result.Message);
-            _mockEventRepository.Verify(r => r.UpdateAsync(It.IsAny<Event>()), Times.Never);
+            _mockEventRepository.Verify(r => r.UpdateAsync(It.IsAny<Event>(), It.IsAny<IEnumerable<int>>()), Times.Never);
         }
 
         [Fact]
@@ -103,7 +121,7 @@ namespace AgendaUni.Tests
         {
             // Arrange
             var eventId = 1;
-            var existingEvent = new Event { Id = eventId };
+            var existingEvent = new Event { Id = eventId, NotificationIds = new List<EventNotification> { new EventNotification { NotificationId = 1 } } };
             _mockEventRepository.Setup(r => r.GetByIdAsync(eventId)).ReturnsAsync(existingEvent);
 
             // Act
@@ -112,6 +130,7 @@ namespace AgendaUni.Tests
             // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal("Evento deletado com sucesso.", result.Message);
+            _mockNotificationService.Verify(service => service.CancelNotification(1), Times.Once);
             _mockEventRepository.Verify(r => r.DeleteAsync(eventId), Times.Once);
         }
 

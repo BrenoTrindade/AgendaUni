@@ -16,5 +16,7 @@ namespace AgendaUni.Models
 
         [ForeignKey("Class")]
         public int ClassId { get; set; }
+
+        public int? NotificationId { get; set; }
     }
 }

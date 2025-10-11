@@ -19,12 +19,13 @@ namespace AgendaUni.Repositories
 
             var command = connection.CreateCommand();
             command.CommandText = @"
-                INSERT INTO ClassSchedule (ClassId, DayOfWeek, ClassTime)
-                VALUES ($classId, $dayOfWeek, $classTime);";
+                INSERT INTO ClassSchedule (ClassId, DayOfWeek, ClassTime, NotificationId)
+                VALUES ($classId, $dayOfWeek, $classTime, $notificationId);";
 
             command.Parameters.AddWithValue("$classId", classObj.ClassId);
             command.Parameters.AddWithValue("$dayOfWeek", classObj.DayOfWeek);
-            command.Parameters.AddWithValue("classTime", classObj.ClassTime);
+            command.Parameters.AddWithValue("$classTime", classObj.ClassTime);
+            command.Parameters.AddWithValue("$notificationId", classObj.NotificationId ?? (object)DBNull.Value);
 
             await command.ExecuteNonQueryAsync();
         }
@@ -35,7 +36,7 @@ namespace AgendaUni.Repositories
             using var connection = _context.GetConnection();
             await connection.OpenAsync();
             var command = connection.CreateCommand();
-            command.CommandText = @"SELECT Id, ClassId, DayOfWeek, ClassTime FROM ClassSchedule;";
+            command.CommandText = @"SELECT Id, ClassId, DayOfWeek, ClassTime, NotificationId FROM ClassSchedule;";
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
@@ -44,7 +45,8 @@ namespace AgendaUni.Repositories
                     Id = reader.GetInt32(0),
                     ClassId = reader.GetInt32(1),
                     DayOfWeek = (DayOfWeek)reader.GetInt32(2),
-                    ClassTime = reader.GetTimeSpan(3)
+                    ClassTime = reader.GetTimeSpan(3),
+                    NotificationId = reader.IsDBNull(4) ? null : reader.GetInt32(4)
                 });
             }
             return schedules;
@@ -55,7 +57,7 @@ namespace AgendaUni.Repositories
             using var connection = _context.GetConnection();
             await connection.OpenAsync();
             var command = connection.CreateCommand();
-            command.CommandText = @"SELECT Id, ClassId, DayOfWeek, ClassTime FROM ClassSchedule WHERE Id = $id;";
+            command.CommandText = @"SELECT Id, ClassId, DayOfWeek, ClassTime, NotificationId FROM ClassSchedule WHERE Id = $id;";
             command.Parameters.AddWithValue("$id", id);
             using var reader = await command.ExecuteReaderAsync();
             if (await reader.ReadAsync())
@@ -65,7 +67,8 @@ namespace AgendaUni.Repositories
                     Id = reader.GetInt32(0),
                     ClassId = reader.GetInt32(1),
                     DayOfWeek = (DayOfWeek)reader.GetInt32(2),
-                    ClassTime = reader.GetTimeSpan(3)
+                    ClassTime = reader.GetTimeSpan(3),
+                    NotificationId = reader.IsDBNull(4) ? null : reader.GetInt32(4)
                 };
             }
             return null;
@@ -81,11 +84,13 @@ namespace AgendaUni.Repositories
                 UPDATE ClassSchedule SET
                     ClassId = $classId,
                     DayOfWeek = $dayOfWeek,
-                    ClassTime = $classTime
+                    ClassTime = $classTime,
+                    NotificationId = $notificationId
                 WHERE Id = $id;";
             command.Parameters.AddWithValue("$classId", classSchedule.ClassId);
             command.Parameters.AddWithValue("$dayOfWeek", classSchedule.DayOfWeek);
             command.Parameters.AddWithValue("$classTime", classSchedule.ClassTime);
+            command.Parameters.AddWithValue("$notificationId", classSchedule.NotificationId ?? (object)DBNull.Value);
             command.Parameters.AddWithValue("$id", classSchedule.Id);
 
             await command.ExecuteNonQueryAsync();
@@ -108,7 +113,7 @@ namespace AgendaUni.Repositories
             using var connection = _context.GetConnection();
             await connection.OpenAsync();
             var command = connection.CreateCommand();
-            command.CommandText = @"SELECT Id, ClassId, DayOfWeek, ClassTime FROM ClassSchedule WHERE ClassId = $classId;";
+            command.CommandText = @"SELECT Id, ClassId, DayOfWeek, ClassTime, NotificationId FROM ClassSchedule WHERE ClassId = $classId;";
             command.Parameters.AddWithValue("$classId", classId);
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
@@ -118,7 +123,8 @@ namespace AgendaUni.Repositories
                     Id = reader.GetInt32(0),
                     ClassId = reader.GetInt32(1),
                     DayOfWeek = (DayOfWeek)reader.GetInt32(2),
-                    ClassTime = reader.GetTimeSpan(3)
+                    ClassTime = reader.GetTimeSpan(3),
+                    NotificationId = reader.IsDBNull(4) ? null : reader.GetInt32(4)
                 });
             }
             return schedules;

@@ -4,7 +4,8 @@ using AgendaUni.Repositories;
 using AgendaUni.Repositories.Interfaces;
 using AgendaUni.ViewModels;
 using AgendaUni.Views;
-using AgendaUni.Common.Converters;
+
+using Plugin.LocalNotification;
 
 namespace AgendaUni
 {
@@ -15,6 +16,7 @@ namespace AgendaUni
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseLocalNotification()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -37,6 +39,8 @@ namespace AgendaUni
             builder.Services.AddScoped<EventService>();
 
             builder.Services.AddSingleton<ThemeService>();
+            builder.Services.AddScoped<NotificationService>();
+
 
             builder.Services.AddTransient<ClassViewModel>();
             builder.Services.AddTransient<ClassPage>();
@@ -60,8 +64,9 @@ namespace AgendaUni
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+            var app = builder.Build();
 
-            return builder.Build();
+            return app;
         }
     }
 }

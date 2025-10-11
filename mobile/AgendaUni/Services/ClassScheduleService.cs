@@ -7,10 +7,14 @@ namespace AgendaUni.Services
     public class ClassScheduleService
     {
         private readonly IClassScheduleRepository _classScheduleRepository;
+        private readonly IClassRepository _classRepository;
+        private readonly NotificationService _notificationService;
 
-        public ClassScheduleService(IClassScheduleRepository classScheduleRepository)
+        public ClassScheduleService(IClassScheduleRepository classScheduleRepository,IClassRepository classRepository ,NotificationService notificationService)
         {
             _classScheduleRepository = classScheduleRepository;
+            _classRepository = classRepository;
+            _notificationService = notificationService;
         }
 
         public async Task<ServiceResult> AddClassScheduleAsync(ClassSchedule classSchedule)
@@ -23,6 +27,15 @@ namespace AgendaUni.Services
 
             if (classSchedule.ClassTime == default)
                 return ServiceResult.Failure("Informe o horário da aula.");
+
+            var parentClass = await _classRepository.GetByIdAsync(classSchedule.ClassId);
+            if (parentClass == null)
+            {
+                return ServiceResult.Failure("A aula associada a este horário não foi encontrada.");
+            }
+
+            var notificationId = await _notificationService.ScheduleNotificationForClassSchedule(classSchedule, parentClass);
+            classSchedule.NotificationId = notificationId;
 
             await _classScheduleRepository.AddAsync(classSchedule);
 
@@ -56,6 +69,20 @@ namespace AgendaUni.Services
             if (classSchedule.ClassTime == default)
                 return ServiceResult.Failure("Informe o horário da aula.");
 
+            var existingSchedule = await _classScheduleRepository.GetByIdAsync(classSchedule.Id);
+            if (existingSchedule?.NotificationId != null)
+            {
+                _notificationService.CancelNotification(existingSchedule.NotificationId.Value);
+            }
+
+            var parentClass = await _classRepository.GetByIdAsync(classSchedule.ClassId);
+            if (parentClass == null)
+            {
+                return ServiceResult.Failure("A aula associada a este horário não foi encontrada.");
+            }
+            var notificationId = await _notificationService.ScheduleNotificationForClassSchedule(classSchedule, parentClass);
+            classSchedule.NotificationId = notificationId;
+
             await _classScheduleRepository.UpdateAsync(classSchedule);
 
             return ServiceResult.Success("Horário da aula atualizado com sucesso.");
@@ -66,6 +93,11 @@ namespace AgendaUni.Services
             var scheduleToDelete = await _classScheduleRepository.GetByIdAsync(id);
             if (scheduleToDelete == null)
                 return ServiceResult.Failure("Horário não encontrado.");
+
+            if (scheduleToDelete.NotificationId != null)
+            {
+                _notificationService.CancelNotification(scheduleToDelete.NotificationId.Value);
+            }
 
             await _classScheduleRepository.DeleteAsync(id);
 

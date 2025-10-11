@@ -37,6 +37,7 @@ public class AppDbContext
                     DayOfWeek INTEGER NOT NULL,
                     ClassTime TEXT NOT NULL,
                     ClassId INTEGER NOT NULL,
+                    NotificationId INTEGER NULL,
                     FOREIGN KEY (ClassId) REFERENCES Class(Id)
                 )";
         createClassScheduleTable.ExecuteNonQuery();
@@ -66,5 +67,16 @@ public class AppDbContext
                 )";
 
         createEventTable.ExecuteNonQuery();
+
+        // Criação da tabela EventNotification
+        var createEventNotificationTable = connection.CreateCommand();
+        createEventNotificationTable.CommandText = @"
+                CREATE TABLE IF NOT EXISTS EventNotification (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    NotificationId INTEGER NOT NULL,
+                    EventId INTEGER NOT NULL,
+                    FOREIGN KEY (EventId) REFERENCES Event(Id)
+                )";
+        createEventNotificationTable.ExecuteNonQuery();
     }
 }

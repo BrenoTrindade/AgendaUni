@@ -17,5 +17,7 @@ namespace AgendaUni.Models
 
         [ForeignKey("Class")]
         public int ClassId { get; set; }
+
+        public virtual ICollection<EventNotification> NotificationIds { get; set; } = new List<EventNotification>();
     }
 }

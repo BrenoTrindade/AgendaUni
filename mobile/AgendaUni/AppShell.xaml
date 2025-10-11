@@ -16,10 +16,6 @@
         ContentTemplate="{DataTemplate local:ClassListPage}" />
 
     <ShellContent
-        Title="Horários"
-        ContentTemplate="{DataTemplate local:ClassSchedulePage}" />
-
-    <ShellContent
         Title="Faltas"
         ContentTemplate="{DataTemplate local:AbsencePage}" /> 
 

@@ -104,7 +104,7 @@ public class AbsenceViewModel : BaseViewModel
 
     private async Task SaveAbsence()
     {
-        CurrentAbsence.ClassId = ClassId;
+        CurrentAbsence.ClassId = SelectedClass.Id;
 
         var result = CurrentAbsence.Id == 0
             ? await _absenceService.AddAbsenceAsync(CurrentAbsence)

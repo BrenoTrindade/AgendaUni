@@ -4,7 +4,6 @@ using AgendaUni.Repositories;
 using AgendaUni.Repositories.Interfaces;
 using AgendaUni.ViewModels;
 using AgendaUni.Views;
-
 using Plugin.LocalNotification;
 
 namespace AgendaUni

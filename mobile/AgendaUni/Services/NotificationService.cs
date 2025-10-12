@@ -10,17 +10,15 @@ namespace AgendaUni.Services
         {
             var notificationIds = new List<int>();
 
-            // --- Notificação 1: Uma semana antes ---
             var titleSemana = $"Evento em uma semana: {cl.ClassName}";
             var descSemana = $"Seu evento '{ev.Description}' será na próxima semana, no dia {ev.EventDate:dd/MM}.";
-            var notifyTimeSemana = ev.EventDate.AddDays(-7);
+            var notifyTimeSemana = ev.EventDate.AddDays(-7).AddHours(6);
             var idSemana = await ScheduleNotification(titleSemana, descSemana, notifyTimeSemana);
             if (idSemana != -1) notificationIds.Add(idSemana);
 
-            // --- Notificação 2: Um dia antes ---
             var titleDia = $"Evento amanhã: {cl.ClassName}";
             var descDia = $"Seu evento '{ev.Description}' é amanhã.";
-            var notifyTimeDia = ev.EventDate.AddDays(-1);
+            var notifyTimeDia = ev.EventDate.AddDays(-1).AddHours(6);
             var idDia = await ScheduleNotification(titleDia, descDia, notifyTimeDia);
             if (idDia != -1) notificationIds.Add(idDia);
 
@@ -33,8 +31,6 @@ namespace AgendaUni.Services
             var scheduleDayOfWeek = (int)sch.DayOfWeek;
             var currentDayOfWeek = (int)now.DayOfWeek;
 
-            var faltasInfo = $"Faltas: {cl.Absences.Count} de {cl.MaximumAbsences}.";
-
             var daysToAdd = scheduleDayOfWeek - currentDayOfWeek;
             if (daysToAdd < 0)
             {
@@ -42,7 +38,7 @@ namespace AgendaUni.Services
             }
 
             var nextClassDate = now.Date.AddDays(daysToAdd);
-            var notificationTime = nextClassDate.Add(sch.ClassTime).AddMinutes(-1);
+            var notificationTime = nextClassDate.Add(sch.ClassTime).AddHours(-1);
 
             if (notificationTime < now)
             {
@@ -52,7 +48,7 @@ namespace AgendaUni.Services
             var request = new NotificationRequest
             {
                 Title = "Lembrete de Aula",
-                Description = $"Sua aula de {cl.ClassName} começa em 1 hora.\n{faltasInfo}",
+                Description = $"Sua aula de {cl.ClassName} começa em 1 hora.",
                 Schedule = new NotificationRequestSchedule
                 {
                     NotifyTime = notificationTime,

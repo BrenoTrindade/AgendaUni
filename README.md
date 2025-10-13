@@ -73,9 +73,15 @@ Em breve, o aplicativo estará disponível para todos os usuários na versão of
 
 .NET MAUI
 
+BLAZOR
+
+SQLSERVER
+
 C#
 
 SQLite (armazenamento local offline)
+
+XUNIT
 
 # 📜 Licença
 Este projeto é de código aberto sob a licença MIT License para fins de portfólio. Para uso comercial ou distribuição, entre em contato com o desenvolvedor.

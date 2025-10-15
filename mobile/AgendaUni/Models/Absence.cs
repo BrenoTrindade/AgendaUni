@@ -1,21 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AgendaUni.Models
+namespace AgendaUni.Models;
+
+public class Absence
 {
-    public class Absence
-    {
-        [Key]
-        public int Id { get; set; }
+    [Key]
+    public int Id { get; set; }
 
-        [Required]
-        public DateTime AbsenceDate { get; set; }
+    [Required]
+    public DateTime AbsenceDate { get; set; }
 
-        [Required]
-        [StringLength(200)]
-        public string AbsenceReason { get; set; }
+    [Required]
+    [StringLength(200)]
+    public string AbsenceReason { get; set; }
 
-        [ForeignKey("Class")]
-        public int ClassId { get; set; }
-    }
+    public int ClassId { get; set; }
+
+    public virtual Class Class { get; set; }
 }

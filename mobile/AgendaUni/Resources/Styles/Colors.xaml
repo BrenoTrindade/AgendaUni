@@ -12,9 +12,9 @@
     <Color x:Key="LightSecondaryText">#757575</Color>
 
     <!-- Dark Theme -->
-    <Color x:Key="DarkPrimary">#2A2A2E</Color>
-    <Color x:Key="DarkSecondary">#36363B</Color>
-    <Color x:Key="DarkTertiary">#48484E</Color>
+    <Color x:Key="DarkPrimary">#404044</Color>
+    <Color x:Key="DarkSecondary">#4D4D52</Color>
+    <Color x:Key="DarkTertiary">#5F5F66</Color>
     <Color x:Key="DarkPrimaryText">#F5F5F5</Color>
     <Color x:Key="DarkSecondaryText">#C5C5C5</Color>
 

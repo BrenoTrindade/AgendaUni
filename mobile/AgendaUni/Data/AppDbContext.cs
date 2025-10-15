@@ -1,82 +1,40 @@
-using Microsoft.Data.Sqlite;
+using AgendaUni.Models;
+using Microsoft.EntityFrameworkCore;
 
-public class AppDbContext
+public class AppDbContext : DbContext
 {
-    private readonly string _connectionString;
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    public AppDbContext(string dbPath)
+    public DbSet<Absence> Absences { get; set; }
+    public DbSet<Class> Classes { get; set; }
+    public DbSet<ClassSchedule> ClassSchedules { get; set; }
+    public DbSet<Event> Events { get; set; }
+    public DbSet<EventNotification> EventNotifications { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        _connectionString = $"Data Source={dbPath}";
-    }
+        modelBuilder.Entity<Class>()
+            .HasMany(c => c.Absences)
+            .WithOne(a => a.Class)
+            .HasForeignKey(a => a.ClassId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-    public SqliteConnection GetConnection()
-    {
-        return new SqliteConnection(_connectionString);
-    }
+        modelBuilder.Entity<Class>()
+            .HasMany(c => c.Schedules)
+            .WithOne(s => s.Class)
+            .HasForeignKey(s => s.ClassId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-    // Método para criar uma tabela de exemplo
-    public void InitializeDatabase()
-    {
-        using var connection = GetConnection();
-        connection.Open();
+        modelBuilder.Entity<Class>()
+            .HasMany(c => c.Events)
+            .WithOne(e => e.Class)
+            .HasForeignKey(e => e.ClassId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        // Criação da tabela Class
-        var createClassTable = connection.CreateCommand();
-        createClassTable.CommandText = @"
-                CREATE TABLE IF NOT EXISTS Class (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    ClassName TEXT NOT NULL,
-                    MaximumAbsences INTEGER NOT NULL
-                )";
-        createClassTable.ExecuteNonQuery();
-
-        var createClassScheduleTable = connection.CreateCommand();
-        createClassScheduleTable.CommandText = @"
-                CREATE TABLE IF NOT EXISTS ClassSchedule (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    DayOfWeek INTEGER NOT NULL,
-                    ClassTime TEXT NOT NULL,
-                    ClassId INTEGER NOT NULL,
-                    NotificationId INTEGER NULL,
-                    FOREIGN KEY (ClassId) REFERENCES Class(Id)
-                )";
-        createClassScheduleTable.ExecuteNonQuery();
-
-        // Criação da tabela Absence
-        var createAbsenceTable = connection.CreateCommand();
-        createAbsenceTable.CommandText = @"
-                CREATE TABLE IF NOT EXISTS Absence (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    AbsenceDate TEXT NOT NULL,
-                    AbsenceReason TEXT NOT NULL,
-                    ClassId INTEGER NOT NULL,
-                    FOREIGN KEY (ClassId) REFERENCES Class(Id)
-                )";
-
-        createAbsenceTable.ExecuteNonQuery();
-
-        // Criação da tabela Event
-        var createEventTable = connection.CreateCommand();
-        createEventTable.CommandText = @"
-                CREATE TABLE IF NOT EXISTS Event (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    EventDate TEXT NOT NULL,
-                    Description TEXT NOT NULL,
-                    ClassId INTEGER NOT NULL,
-                    FOREIGN KEY (ClassId) REFERENCES Class(Id)
-                )";
-
-        createEventTable.ExecuteNonQuery();
-
-        // Criação da tabela EventNotification
-        var createEventNotificationTable = connection.CreateCommand();
-        createEventNotificationTable.CommandText = @"
-                CREATE TABLE IF NOT EXISTS EventNotification (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    NotificationId INTEGER NOT NULL,
-                    EventId INTEGER NOT NULL,
-                    FOREIGN KEY (EventId) REFERENCES Event(Id)
-                )";
-        createEventNotificationTable.ExecuteNonQuery();
+        modelBuilder.Entity<Event>()
+            .HasMany(c => c.EventNotifications)
+            .WithOne(e => e.Event)
+            .HasForeignKey(e => e.EventId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

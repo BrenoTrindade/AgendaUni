@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Plugin.LocalNotification;
 
 namespace AgendaUni
@@ -7,7 +8,6 @@ namespace AgendaUni
         public App(AppDbContext dbContext)
         {
             InitializeComponent();
-            dbContext.InitializeDatabase();
             Current.UserAppTheme = AppTheme.Light;
         }
 

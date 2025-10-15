@@ -5,6 +5,7 @@ using AgendaUni.Repositories.Interfaces;
 using AgendaUni.ViewModels;
 using AgendaUni.Views;
 using Plugin.LocalNotification;
+using Microsoft.EntityFrameworkCore;
 
 namespace AgendaUni
 {
@@ -23,7 +24,7 @@ namespace AgendaUni
                 });
 
             string dbPath = Path.Combine(FileSystem.AppDataDirectory, "absence.db");
-            builder.Services.AddScoped(sp => new AppDbContext(dbPath));
+            builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite($"Data Source={dbPath}"), ServiceLifetime.Transient);
 
             builder.Services.AddScoped<IClassRepository, ClassRepository>();
             builder.Services.AddScoped<ClassService>();
@@ -65,6 +66,11 @@ namespace AgendaUni
 #endif
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                dbContext.Database.Migrate();
+            }
             return app;
         }
     }

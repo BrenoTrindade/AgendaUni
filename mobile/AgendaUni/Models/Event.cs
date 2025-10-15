@@ -1,23 +1,21 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AgendaUni.Models
+namespace AgendaUni.Models;
+public class Event
 {
-    public class Event
-    {
-        [Key]
-        public int Id { get; set; }
+    [Key]
+    public int Id { get; set; }
 
-        [Required]
-        public DateTime EventDate { get; set; }
+    [Required]
+    public DateTime EventDate { get; set; }
 
-        [Required]
-        [StringLength(200)]
-        public string Description { get; set; }
+    [Required]
+    [StringLength(200)]
+    public string Description { get; set; }
 
-        [ForeignKey("Class")]
-        public int ClassId { get; set; }
+    public int ClassId { get; set; }
 
-        public virtual ICollection<EventNotification> NotificationIds { get; set; } = new List<EventNotification>();
-    }
+    public virtual Class Class { get; set; }
+
+    public virtual ICollection<EventNotification> EventNotifications { get; set; } = new List<EventNotification>();
 }

@@ -59,9 +59,9 @@ namespace AgendaUni.Services
                 return ServiceResult.Failure("Informe a descrição do evento.");
 
             var existingEvent = await _eventRepository.GetByIdAsync(ev.Id);
-            if (existingEvent?.NotificationIds != null)
+            if (existingEvent?.EventNotifications != null)
             {
-                foreach (var notification in existingEvent.NotificationIds)
+                foreach (var notification in existingEvent.EventNotifications)
                 {
                     _notificationService.CancelNotification(notification.NotificationId);
                 }
@@ -86,9 +86,9 @@ namespace AgendaUni.Services
             if (eventToDelete == null)
                 return ServiceResult.Failure("Evento não encontrado.");
 
-            if (eventToDelete.NotificationIds != null)
+            if (eventToDelete.EventNotifications != null)
             {
-                foreach (var notification in eventToDelete.NotificationIds)
+                foreach (var notification in eventToDelete.EventNotifications)
                 {
                     _notificationService.CancelNotification(notification.NotificationId);
                 }

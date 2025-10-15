@@ -6,26 +6,29 @@
     xmlns:local="clr-namespace:AgendaUni.Views"
     Title="AgendaUni">
 
-    <ShellContent
-        Title="Calendário"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <FlyoutItem Title="Principal">
+        <Tab>
+            <ShellContent
+                Title="Calendário"
+                ContentTemplate="{DataTemplate local:MainPage}"
+                Route="MainPage" />
+
+            <ShellContent
+                Title="Matérias"
+                ContentTemplate="{DataTemplate local:ClassListPage}" />
+
+            <ShellContent
+                Title="Faltas"
+                ContentTemplate="{DataTemplate local:AbsencePage}" />
+
+            <ShellContent
+                Title="Eventos"
+                ContentTemplate="{DataTemplate local:EventPage}" />
+        </Tab>
+    </FlyoutItem>
 
     <ShellContent
-        Title="Matérias"
-        ContentTemplate="{DataTemplate local:ClassListPage}" />
-
-    <ShellContent
-        Title="Faltas"
-        ContentTemplate="{DataTemplate local:AbsencePage}" /> 
-
-    <ShellContent
-        Title="Eventos"
-        ContentTemplate="{DataTemplate local:EventPage}" />
-
-    <Shell.ToolbarItems>
-        <ToolbarItem Clicked="OnThemeClicked"
-                     IconImageSource="{AppThemeBinding Light=lightmode.svg, Dark=darkmode.svg}"/>
-    </Shell.ToolbarItems>
+        Title="Configurações"
+        ContentTemplate="{DataTemplate local:SettingsPage}" />
 
 </Shell>

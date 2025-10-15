@@ -15,7 +15,11 @@ namespace AgendaUni.Repositories
 
         public async Task<List<Class>> GetAllAsync()
         {
-            return await _context.Classes.ToListAsync();
+            return await _context.Classes
+                                    .Include(c => c.Absences)
+                                    .Include(c => c.Events)
+                                    .Include(c => c.Schedules)
+                                    .ToListAsync();
         }
 
         public async Task<Class> GetByIdAsync(int id)

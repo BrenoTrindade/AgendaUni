@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:AgendaUni.ViewModels"
+             x:Class="AgendaUni.Views.NotificationsPage"
+             Title="{Binding Title}">
+
+    <VerticalStackLayout Spacing="20" Padding="20">
+        <Frame>
+            <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                <Label Text="Notificações de Eventos" VerticalOptions="Center"/>
+                <Switch IsToggled="{Binding EventNotificationsEnabled, Mode=TwoWay}" HorizontalOptions="End"/>
+            </Grid>
+        </Frame>
+        <Frame>
+            <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                <Label Text="Notificações de Aulas" VerticalOptions="Center"/>
+                <Switch IsToggled="{Binding ClassScheduleNotificationsEnabled, Mode=TwoWay}" HorizontalOptions="End"/>
+            </Grid>
+        </Frame>
+    </VerticalStackLayout>
+</ContentPage>

@@ -157,7 +157,7 @@ public class ClassScheduleViewModel : BaseViewModel
         bool isSuccess = true;
         string finalMessage;
         
-        if (CurrentClassSchedule.Id == 0) // Create mode
+        if (CurrentClassSchedule.Id == 0)
         {
             int successCount = 0;
             foreach (var day in selectedDays)
@@ -177,7 +177,7 @@ public class ClassScheduleViewModel : BaseViewModel
             }
             finalMessage = $"{successCount} de {selectedDays.Count} horários salvos com sucesso.";
         }
-        else // Edit mode
+        else
         {
             if (selectedDays.Count > 1)
             {

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:AgendaUni.ViewModels"
+             x:Class="AgendaUni.Views.SettingsPage"
+             Title="{Binding Title}">
+    
+    <VerticalStackLayout Spacing="20" Padding="20">
+        <Frame>
+            <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                <Label Text="Tema Escuro" VerticalOptions="Center"/>
+                <Switch Grid.Column="1" IsToggled="{Binding IsDarkModeEnabled, Mode=TwoWay}" HorizontalOptions="End"/>
+            </Grid>
+        </Frame>
+        <Frame>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Text="Notificações" VerticalOptions="Center"/>
+                <Button Grid.Column="1" 
+                        ImageSource="arrow_forward.png" 
+                        Command="{Binding GoToNotificationsCommand}" 
+                        HorizontalOptions="End"
+                        BackgroundColor="Transparent"/>
+            </Grid>
+        </Frame>
+    </VerticalStackLayout>
+</ContentPage>

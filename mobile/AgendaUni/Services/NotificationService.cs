@@ -5,9 +5,21 @@ namespace AgendaUni.Services
 {
     public class NotificationService
     {
-        
+        public bool IsEventNotificationEnabled
+        {
+            get => Preferences.Get(nameof(IsEventNotificationEnabled), true);
+            set => Preferences.Set(nameof(IsEventNotificationEnabled), value);
+        }
+
+        public bool IsClassScheduleNotificationEnabled
+        {
+            get => Preferences.Get(nameof(IsClassScheduleNotificationEnabled), true);
+            set => Preferences.Set(nameof(IsClassScheduleNotificationEnabled), value);
+        }
+
         public async Task<List<int>> ScheduleNotificationForEvent(Event ev, Class cl)
         {
+            if (!IsEventNotificationEnabled) return new List<int>();
             var notificationIds = new List<int>();
 
             var titleSemana = $"Evento em uma semana: {cl.ClassName}";
@@ -27,6 +39,7 @@ namespace AgendaUni.Services
 
         public async Task<int> ScheduleNotificationForClassSchedule(ClassSchedule sch, Class cl)
         {
+            if (!IsClassScheduleNotificationEnabled) return -1;
             var now = DateTime.Now;
             var scheduleDayOfWeek = (int)sch.DayOfWeek;
             var currentDayOfWeek = (int)now.DayOfWeek;

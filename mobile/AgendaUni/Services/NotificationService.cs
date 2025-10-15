@@ -1,20 +1,29 @@
 using AgendaUni.Models;
+using AgendaUni.Repositories.Interfaces;
 using Plugin.LocalNotification;
 
 namespace AgendaUni.Services
 {
     public class NotificationService
     {
-        public bool IsEventNotificationEnabled
+        private readonly IClassRepository _classRepository;
+        private readonly IClassScheduleRepository _classScheduleRepository;
+        private readonly IEventRepository _eventRepository;
+
+        public NotificationService(IClassRepository classRepository, IClassScheduleRepository classScheduleRepository, IEventRepository eventRepository)
         {
-            get => Preferences.Get(nameof(IsEventNotificationEnabled), true);
-            set => Preferences.Set(nameof(IsEventNotificationEnabled), value);
+            _classRepository = classRepository;
+            _classScheduleRepository = classScheduleRepository;
+            _eventRepository = eventRepository;
         }
 
-        public bool IsClassScheduleNotificationEnabled
+        public bool IsEventNotificationEnabled => Preferences.Get(nameof(IsEventNotificationEnabled), true);
+
+        public bool IsClassScheduleNotificationEnabled => Preferences.Get(nameof(IsClassScheduleNotificationEnabled), true);
+
+        public async Task<IList<NotificationRequest>> GetPendingNotificationRequests()
         {
-            get => Preferences.Get(nameof(IsClassScheduleNotificationEnabled), true);
-            set => Preferences.Set(nameof(IsClassScheduleNotificationEnabled), value);
+            return await LocalNotificationCenter.Current.GetPendingNotificationList();
         }
 
         public async Task<List<int>> ScheduleNotificationForEvent(Event ev, Class cl)
@@ -25,13 +34,13 @@ namespace AgendaUni.Services
             var titleSemana = $"Evento em uma semana: {cl.ClassName}";
             var descSemana = $"Seu evento '{ev.Description}' será na próxima semana, no dia {ev.EventDate:dd/MM}.";
             var notifyTimeSemana = ev.EventDate.AddDays(-7).AddHours(6);
-            var idSemana = await ScheduleNotification(titleSemana, descSemana, notifyTimeSemana);
+            var idSemana = await ScheduleNotification(titleSemana, descSemana, notifyTimeSemana, "event");
             if (idSemana != -1) notificationIds.Add(idSemana);
 
             var titleDia = $"Evento amanhã: {cl.ClassName}";
             var descDia = $"Seu evento '{ev.Description}' é amanhã.";
             var notifyTimeDia = ev.EventDate.AddDays(-1).AddHours(6);
-            var idDia = await ScheduleNotification(titleDia, descDia, notifyTimeDia);
+            var idDia = await ScheduleNotification(titleDia, descDia, notifyTimeDia, "event");
             if (idDia != -1) notificationIds.Add(idDia);
 
             return notificationIds;
@@ -62,6 +71,7 @@ namespace AgendaUni.Services
             {
                 Title = "Lembrete de Aula",
                 Description = $"Sua aula de {cl.ClassName} começa em 1 hora.",
+                ReturningData = "class_schedule",
                 Schedule = new NotificationRequestSchedule
                 {
                     NotifyTime = notificationTime,
@@ -71,7 +81,7 @@ namespace AgendaUni.Services
             await LocalNotificationCenter.Current.Show(request);
             return request.NotificationId;
         }
-        private async Task<int> ScheduleNotification(string title, string description, DateTime notifyTime)
+        private async Task<int> ScheduleNotification(string title, string description, DateTime notifyTime, string returningData)
         {
             if (notifyTime > DateTime.Now)
             {
@@ -79,6 +89,7 @@ namespace AgendaUni.Services
                 {
                     Title = title,
                     Description = description,
+                    ReturningData = returningData,
                     Schedule = new NotificationRequestSchedule
                     {
                         NotifyTime = notifyTime
@@ -94,6 +105,44 @@ namespace AgendaUni.Services
         public void CancelNotification(int notificationId)
         {
             LocalNotificationCenter.Current.Cancel(notificationId);
+        }
+
+        public async Task CancelNotificationsByType(string notificationType)
+        {
+            var pendingNotifications = await GetPendingNotificationRequests();
+            foreach (var notification in pendingNotifications)
+            {
+                if (notification.ReturningData == notificationType)
+                {
+                    LocalNotificationCenter.Current.Cancel(notification.NotificationId);
+                }
+            }
+        }
+
+        public async Task RescheduleEventNotifications()
+        {
+            var classes = await _classRepository.GetAllAsync();
+            foreach (var cl in classes)
+            {
+                var events = await _eventRepository.GetEventsByClassIdAsync(cl.Id);
+                foreach (var ev in events)
+                {
+                    await ScheduleNotificationForEvent(ev, cl);
+                }
+            }
+        }
+
+        public async Task RescheduleClassScheduleNotifications()
+        {
+            var classes = await _classRepository.GetAllAsync();
+            foreach (var cl in classes)
+            {
+                var schedules = await _classScheduleRepository.GetSchedulesByClassIdAsync(cl.Id);
+                foreach (var schedule in schedules)
+                {
+                    await ScheduleNotificationForClassSchedule(schedule, cl);
+                }
+            }
         }
     }
 }

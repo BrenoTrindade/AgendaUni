@@ -15,7 +15,15 @@ public class NotificationsViewModel : BaseViewModel
         {
             if (SetProperty(ref _eventNotificationsEnabled, value))
             {
-                _notificationService.IsEventNotificationEnabled = value;
+                Preferences.Set("IsEventNotificationEnabled", value);
+                if (value)
+                {
+                    _notificationService.RescheduleEventNotifications();
+                }
+                else
+                {
+                    _notificationService.CancelNotificationsByType("event");
+                }
             }
         }
     }
@@ -27,7 +35,15 @@ public class NotificationsViewModel : BaseViewModel
         {
             if (SetProperty(ref _classScheduleNotificationsEnabled, value))
             {
-                _notificationService.IsClassScheduleNotificationEnabled = value;
+                Preferences.Set("IsClassScheduleNotificationEnabled", value);
+                if (value)
+                {
+                    _notificationService.RescheduleClassScheduleNotifications();
+                }
+                else
+                {
+                    _notificationService.CancelNotificationsByType("class_schedule");
+                }
             }
         }
     }
@@ -36,7 +52,7 @@ public class NotificationsViewModel : BaseViewModel
     {
         _notificationService = notificationService;
         Title = "Notificações";
-        _eventNotificationsEnabled = _notificationService.IsEventNotificationEnabled;
-        _classScheduleNotificationsEnabled = _notificationService.IsClassScheduleNotificationEnabled;
+        _eventNotificationsEnabled = Preferences.Get("IsEventNotificationEnabled", true);
+        _classScheduleNotificationsEnabled = Preferences.Get("IsClassScheduleNotificationEnabled", true);
     }
 }

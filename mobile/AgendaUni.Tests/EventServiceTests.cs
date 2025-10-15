@@ -15,14 +15,14 @@ namespace AgendaUni.Tests
     {
         private readonly Mock<IEventRepository> _mockEventRepository;
         private readonly Mock<IClassRepository> _mockClassRepository;
-        private readonly Mock<NotificationService> _mockNotificationService;
+        private readonly Mock<INotificationService> _mockNotificationService;
         private readonly EventService _eventService;
 
         public EventServiceTests()
         {
             _mockEventRepository = new Mock<IEventRepository>();
             _mockClassRepository = new Mock<IClassRepository>();
-            _mockNotificationService = new Mock<NotificationService>();
+            _mockNotificationService = new Mock<INotificationService>();
             _eventService = new EventService(_mockEventRepository.Object, _mockClassRepository.Object, _mockNotificationService.Object);
         }
 

@@ -1,6 +1,7 @@
 using AgendaUni.Common;
 using AgendaUni.Models;
 using AgendaUni.Repositories.Interfaces;
+using AgendaUni.Services;
 
 namespace AgendaUni.Services
 {

@@ -2,175 +2,176 @@ using AgendaUni.Common.Enums;
 using AgendaUni.Models;
 using AgendaUni.Services;
 using Plugin.Maui.Calendar.Models;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace AgendaUni.ViewModels
 {
     public class MainPageViewModel : BaseViewModel
     {
-        private readonly AbsenceService _absenceService;
-        private readonly ClassScheduleService _classScheduleService;
         private readonly ClassService _classService;
-        private readonly EventService _eventService;
+
         public EventCollection Events { get; set; }
         public ICommand FilterCalendarCommand { get; }
-        public bool ShowAllSelected { get; set; } = true;
-        public bool ShowEventsSelected { get; set; }
-        public bool ShowClassesSelected { get; set; }
-        public bool ShowAbsencesSelected { get; set; }
         public CultureInfo Culture => new CultureInfo("pt-BR");
 
-        List<ClassEvent> classEvents;
-
-        public MainPageViewModel(ClassService classService, AbsenceService absenceService, ClassScheduleService classScheduleService, EventService eventService)
+        private bool _showAllSelected = true;
+        public bool ShowAllSelected
         {
-            _classService = classService;
-            _absenceService = absenceService;
-            _classScheduleService = classScheduleService;
-            _eventService = eventService;
-            Events = new EventCollection();
-            FilterCalendarCommand = new Command<string>(FilterCalendar);
+            get => _showAllSelected;
+            set => SetProperty(ref _showAllSelected, value);
         }
-        
-        public class ClassEvent
+
+        private bool _showEventsSelected;
+        public bool ShowEventsSelected
+        {
+            get => _showEventsSelected;
+            set => SetProperty(ref _showEventsSelected, value);
+        }
+
+        private bool _showClassesSelected;
+        public bool ShowClassesSelected
+        {
+            get => _showClassesSelected;
+            set => SetProperty(ref _showClassesSelected, value);
+        }
+
+        private bool _showAbsencesSelected;
+        public bool ShowAbsencesSelected
+        {
+            get => _showAbsencesSelected;
+            set => SetProperty(ref _showAbsencesSelected, value);
+        }
+
+        private List<Class> _allClasses = new List<Class>();
+
+        public class CalendarDisplayEvent
         {
             public string Name { get; set; }
             public string Description { get; set; }
             public EventType Type { get; set; }
         }
-        
-        private async void FilterCalendar(string filter)
+
+        public MainPageViewModel(ClassService classService)
         {
-            Events.Clear();
-
-
-            var classes = await _classService.GetAllClassesAsync();
-
-            if (filter == "All")
-            {
-                ShowAllSelected = true;
-
-                var absences = await _absenceService.GetAllAbsencesAsync();
-                var schedules = await _classScheduleService.GetAllClassSchedulesAsync();
-                var events = await _eventService.GetAllEventsAsync();
-
-                AddClassSchedules(classes, schedules.ToList());
-                AddAbsences(classes, absences.ToList());
-                AddEvents(classes, events.ToList());
-            }
-            if(filter == "Events")
-            {
-                var events = await _eventService.GetAllEventsAsync();
-                AddEvents(classes, events.ToList());
-            }
-            if (filter == "Classes")
-            {
-                var schedules = await _classScheduleService.GetAllClassSchedulesAsync();
-                AddClassSchedules(classes, schedules.ToList());
-            }
-            if (filter == "Absences")
-            {
-                var absences = await _absenceService.GetAllAbsencesAsync();
-                AddAbsences(classes, absences.ToList());
-            }
-            ShowAllSelected = filter == "All";
-            ShowEventsSelected = filter == "Events";
-            ShowClassesSelected = filter == "Classes";
-            ShowAbsencesSelected = filter == "Absences";
-            OnPropertyChanged(nameof(ShowAllSelected));
-            OnPropertyChanged(nameof(ShowEventsSelected));
-            OnPropertyChanged(nameof(ShowClassesSelected));
-            OnPropertyChanged(nameof(ShowAbsencesSelected));
-            
+            _classService = classService;
+            Events = new EventCollection();
+            FilterCalendarCommand = new Command<string>(ApplyFilter);
         }
 
         public override async Task OnAppearingAsync()
         {
+            await LoadDataAsync();
+            ApplyFilter("All");
+        }
+
+        private async Task LoadDataAsync()
+        {
+            IsBusy = true;
+            _allClasses = await _classService.GetAllClassesAsync() ?? new List<Class>();
+            IsBusy = false;
+        }
+
+        private void ApplyFilter(string filter)
+        {
             Events.Clear();
-            var absences = await _absenceService.GetAllAbsencesAsync();
-            var schedules = await _classScheduleService.GetAllClassSchedulesAsync();
-            var classes = await _classService.GetAllClassesAsync();
-            var events = await _eventService.GetAllEventsAsync();
 
-            AddClassSchedules(classes, schedules.ToList());
-            AddAbsences(classes, absences.ToList());
-            AddEvents(classes, events.ToList());
+            bool showClasses = filter == "All" || filter == "Classes";
+            bool showEvents = filter == "All" || filter == "Events";
+            bool showAbsences = filter == "All" || filter == "Absences";
 
+            foreach (var cls in _allClasses)
+            {
+                if (showClasses && cls.Schedules != null)
+                {
+                    AddClassSchedulesToCalendar(cls);
+                }
+
+                if (showEvents && cls.Events != null)
+                {
+                    AddEventsToCalendar(cls);
+                }
+
+                if (showAbsences && cls.Absences != null)
+                {
+                    AddAbsencesToCalendar(cls);
+                }
+            }
+
+            UpdateFilterSelectionState(filter);
 
             OnPropertyChanged(nameof(Events));
         }
 
-        public void AddAbsences(List<Class> classes, List<Absence> absences)
+        private void AddEventToCalendar(DateTime date, CalendarDisplayEvent eventToAdd)
         {
-            foreach (var absence in absences)
+            var dateOnly = date.Date;
+            if (!Events.ContainsKey(dateOnly))
             {
-                var classObj = classes.FirstOrDefault(c => c.Id == absence.ClassId);
-                var date = absence.AbsenceDate.Date;
-                if (Events.ContainsKey(absence.AbsenceDate.Date))
-                    classEvents = Events[date].Cast<ClassEvent>().ToList();
-                else
-                    classEvents = new List<ClassEvent>();
-
-                classEvents.Add(
-                        new ClassEvent
-                        {
-                            Name = $"Falta: {classObj?.ClassName ?? "Aula"}",
-                            Description = $"Motivo: {absence.AbsenceReason}",
-                            Type = EventType.Absence
-                        }
-                    );
-                Events[date] = classEvents;
+                Events[dateOnly] = new List<CalendarDisplayEvent>();
             }
+            (Events[dateOnly] as List<CalendarDisplayEvent>)?.Add(eventToAdd);
         }
-        public void AddEvents(List<Class> classes, List<Event> events)
-        {
-            foreach (var ev in events)
-            {
-                var classObj = classes.FirstOrDefault(c => c.Id == ev.ClassId);
-                var date = ev.EventDate.Date;
-                if (Events.ContainsKey(ev.EventDate.Date))
-                    classEvents = Events[date].Cast<ClassEvent>().ToList();
-                else
-                    classEvents = new List<ClassEvent>();
 
-                classEvents.Add(
-                        new ClassEvent
-                        {
-                            Name = $"Evento: {classObj?.ClassName ?? "Aula"}",
-                            Description = ev.Description,
-                            Type = EventType.Event
-                        }
-                    );
-                Events[date] = classEvents;
-            }
-        }
-        public void AddClassSchedules(List<Class> classes, List<ClassSchedule> schedules)
+        private void AddClassSchedulesToCalendar(Class cls)
         {
-            foreach (var schedule in schedules)
+            var today = DateTime.Today;
+            foreach (var schedule in cls.Schedules)
             {
-                var classObj = classes.FirstOrDefault(c => c.Id == schedule.ClassId);
-                var today = DateTime.Today;
                 for (int i = 0; i < 30; i++)
                 {
-                    var date = today.AddDays(i);
-                    if (date.DayOfWeek == schedule.DayOfWeek)
+                    var futureDate = today.AddDays(i);
+                    if (futureDate.DayOfWeek == schedule.DayOfWeek)
                     {
-                        if (Events.ContainsKey(date.Date))
-                            classEvents = Events[date].Cast<ClassEvent>().ToList();
-                        else
-                            classEvents = new List<ClassEvent>();
-
-                        classEvents.Add(new ClassEvent
+                        var calendarEvent = new CalendarDisplayEvent
                         {
-                            Name = classObj?.ClassName ?? "Aula",
+                            Name = cls.ClassName ?? "Aula",
                             Description = $"Horário: {schedule.ClassTime:hh\\:mm}",
                             Type = EventType.ClassSchedule
-                        });
-                        Events[date] = classEvents;
+                        };
+                        AddEventToCalendar(futureDate, calendarEvent);
                     }
                 }
             }
+        }
+
+        private void AddEventsToCalendar(Class cls)
+        {
+            foreach (var ev in cls.Events)
+            {
+                var calendarEvent = new CalendarDisplayEvent
+                {
+                    Name = $"Evento: {cls.ClassName ?? "Geral"}",
+                    Description = ev.Description,
+                    Type = EventType.Event
+                };
+                AddEventToCalendar(ev.EventDate, calendarEvent);
+            }
+        }
+
+        private void AddAbsencesToCalendar(Class cls)
+        {
+            foreach (var absence in cls.Absences)
+            {
+                var calendarEvent = new CalendarDisplayEvent
+                {
+                    Name = $"Falta: {cls.ClassName ?? "Aula"}",
+                    Description = $"Motivo: {absence.AbsenceReason}",
+                    Type = EventType.Absence
+                };
+                AddEventToCalendar(absence.AbsenceDate, calendarEvent);
+            }
+        }
+
+        private void UpdateFilterSelectionState(string filter)
+        {
+            ShowAllSelected = filter == "All";
+            ShowEventsSelected = filter == "Events";
+            ShowClassesSelected = filter == "Classes";
+            ShowAbsencesSelected = filter == "Absences";
         }
     }
 }

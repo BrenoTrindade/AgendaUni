@@ -24,7 +24,7 @@ namespace AgendaUni
                 });
 
             string dbPath = Path.Combine(FileSystem.AppDataDirectory, "absence.db");
-            builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite($"Data Source={dbPath}"), ServiceLifetime.Transient);
+            builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite($"Data Source={dbPath}"), ServiceLifetime.Scoped);
 
             builder.Services.AddScoped<IClassRepository, ClassRepository>();
             builder.Services.AddScoped<ClassService>();
@@ -60,6 +60,12 @@ namespace AgendaUni
 
             builder.Services.AddTransient<MainPageViewModel>();
             builder.Services.AddTransient<MainPage>();
+
+            builder.Services.AddTransient<SettingsViewModel>();
+            builder.Services.AddTransient<SettingsPage>();
+
+            builder.Services.AddTransient<NotificationsViewModel>();
+            builder.Services.AddTransient<NotificationsPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

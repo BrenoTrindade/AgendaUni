@@ -1,3 +1,4 @@
+using AgendaUni.Services;
 using Microsoft.EntityFrameworkCore;
 using Plugin.LocalNotification;
 
@@ -5,10 +6,10 @@ namespace AgendaUni
 {
     public partial class App : Application
     {
-        public App(AppDbContext dbContext)
+        public App(AppDbContext dbContext, ThemeService theme)
         {
             InitializeComponent();
-            Current.UserAppTheme = AppTheme.Light;
+            theme.InitializeTheme();
         }
 
         protected override Window CreateWindow(IActivationState? activationState)

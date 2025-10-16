@@ -3,6 +3,21 @@ using System.Runtime.CompilerServices;
 
 public abstract class BaseViewModel : INotifyPropertyChanged
 {
+    private bool _isBusy;
+    private string _title;
+
+    public string Title
+    {
+        get => _title;
+        set => SetProperty(ref _title, value);
+    }
+
+    public bool IsBusy
+    {
+        get => _isBusy;
+        set => SetProperty(ref _isBusy, value);
+    }
+
     public event PropertyChangedEventHandler PropertyChanged;
 
     protected bool SetProperty<T>(

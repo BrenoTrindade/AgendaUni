@@ -14,13 +14,8 @@ namespace AgendaUni
             Routing.RegisterRoute(nameof(AbsencePage), typeof(AbsencePage));
             Routing.RegisterRoute(nameof(ClassSchedulePage), typeof(ClassSchedulePage));
             Routing.RegisterRoute(nameof(EventPage), typeof(EventPage));
-            _isDarkMode = Application.Current.UserAppTheme == AppTheme.Dark;
-        }
-
-        private void OnThemeClicked(object sender, EventArgs e)
-        {
-            _isDarkMode = !_isDarkMode;
-            Application.Current.UserAppTheme = _isDarkMode ? AppTheme.Dark : AppTheme.Light;
+            Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
+            Routing.RegisterRoute(nameof(NotificationsPage), typeof(NotificationsPage));
         }
     }
 }

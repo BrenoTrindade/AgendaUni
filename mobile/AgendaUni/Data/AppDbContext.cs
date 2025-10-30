@@ -13,6 +13,12 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Class>().ToTable("Class");
+        modelBuilder.Entity<Absence>().ToTable("Absence");
+        modelBuilder.Entity<ClassSchedule>().ToTable("ClassSchedule");
+        modelBuilder.Entity<Event>().ToTable("Event");
+        modelBuilder.Entity<EventNotification>().ToTable("EventNotification");
+
         modelBuilder.Entity<Class>()
             .HasMany(c => c.Absences)
             .WithOne(a => a.Class)
@@ -21,7 +27,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Class>()
             .HasMany(c => c.Schedules)
-            .WithOne(s => s.Class)
+             .WithOne(s => s.Class)
             .HasForeignKey(s => s.ClassId)
             .OnDelete(DeleteBehavior.Cascade);
 

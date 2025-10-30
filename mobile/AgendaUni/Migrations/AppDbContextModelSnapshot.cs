@@ -37,7 +37,7 @@ namespace AgendaUni.Migrations
 
                     b.HasIndex("ClassId");
 
-                    b.ToTable("Absences", (string)null);
+                    b.ToTable("Absence", (string)null);
                 });
 
             modelBuilder.Entity("AgendaUni.Models.Class", b =>
@@ -56,7 +56,7 @@ namespace AgendaUni.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Classes", (string)null);
+                    b.ToTable("Class", (string)null);
                 });
 
             modelBuilder.Entity("AgendaUni.Models.ClassSchedule", b =>
@@ -81,7 +81,7 @@ namespace AgendaUni.Migrations
 
                     b.HasIndex("ClassId");
 
-                    b.ToTable("ClassSchedules", (string)null);
+                    b.ToTable("ClassSchedule", (string)null);
                 });
 
             modelBuilder.Entity("AgendaUni.Models.Event", b =>
@@ -105,7 +105,7 @@ namespace AgendaUni.Migrations
 
                     b.HasIndex("ClassId");
 
-                    b.ToTable("Events", (string)null);
+                    b.ToTable("Event", (string)null);
                 });
 
             modelBuilder.Entity("AgendaUni.Models.EventNotification", b =>
@@ -124,7 +124,7 @@ namespace AgendaUni.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("EventNotifications", (string)null);
+                    b.ToTable("EventNotification", (string)null);
                 });
 
             modelBuilder.Entity("AgendaUni.Models.Absence", b =>

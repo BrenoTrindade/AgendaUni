@@ -13,11 +13,11 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Class>().ToTable("Class");
-        modelBuilder.Entity<Absence>().ToTable("Absence");
-        modelBuilder.Entity<ClassSchedule>().ToTable("ClassSchedule");
-        modelBuilder.Entity<Event>().ToTable("Event");
-        modelBuilder.Entity<EventNotification>().ToTable("EventNotification");
+        modelBuilder.Entity<Class>();
+        modelBuilder.Entity<Absence>();
+        modelBuilder.Entity<ClassSchedule>();
+        modelBuilder.Entity<Event>();
+        modelBuilder.Entity<EventNotification>();
 
         modelBuilder.Entity<Class>()
             .HasMany(c => c.Absences)

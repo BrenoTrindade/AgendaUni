@@ -8,9 +8,9 @@ namespace AgendaUni.Services
     {
         private readonly IEventRepository _eventRepository;
         private readonly IClassRepository _classRepository;
-        private readonly NotificationService _notificationService;
+        private readonly INotificationService _notificationService;
 
-        public EventService(IEventRepository eventRepository, IClassRepository classRepository, NotificationService notificationService)
+        public EventService(IEventRepository eventRepository, IClassRepository classRepository, INotificationService notificationService)
         {
             _eventRepository = eventRepository;
             _classRepository = classRepository;
@@ -27,6 +27,9 @@ namespace AgendaUni.Services
 
             var cl = await _classRepository.GetByIdAsync(ev.ClassId);
 
+            if (cl == null)
+                return ServiceResult.Failure("A aula associada a este evento não foi encontrada.");
+
             var notificationIds = await _notificationService.ScheduleNotificationForEvent(ev, cl);
 
             await _eventRepository.AddAsync(ev, notificationIds);
@@ -39,7 +42,7 @@ namespace AgendaUni.Services
             return await _eventRepository.GetAllAsync();
         }
 
-        public async Task<Event> GetEventByIdAsync(int id)
+        public async Task<Event?> GetEventByIdAsync(int id)
         {
             return await _eventRepository.GetByIdAsync(id);
         }
@@ -59,6 +62,13 @@ namespace AgendaUni.Services
                 return ServiceResult.Failure("Informe a descrição do evento.");
 
             var existingEvent = await _eventRepository.GetByIdAsync(ev.Id);
+            if (existingEvent == null)
+                return ServiceResult.Failure("Evento não encontrado.");
+
+            var cl = await _classRepository.GetByIdAsync(ev.ClassId);
+            if (cl == null)
+                return ServiceResult.Failure("A aula associada a este evento não foi encontrada.");
+
             if (existingEvent?.EventNotifications != null)
             {
                 foreach (var notification in existingEvent.EventNotifications)
@@ -67,12 +77,6 @@ namespace AgendaUni.Services
                 }
             }
 
-            var cl = await _classRepository.GetByIdAsync(ev.ClassId);
-
-            if (cl == null)
-            {
-                return ServiceResult.Failure("A aula associada a este horário não foi encontrada.");
-            }
             var notificationIds = await _notificationService.ScheduleNotificationForEvent(ev, cl);
 
             await _eventRepository.UpdateAsync(ev, notificationIds);

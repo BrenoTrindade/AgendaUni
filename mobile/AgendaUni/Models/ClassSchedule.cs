@@ -16,7 +16,7 @@ public class ClassSchedule
 
     public int ClassId { get; set; }
 
-    public virtual Class Class { get; set; }
+    public virtual Class Class { get; set; } = null!;
 
     public int? NotificationId { get; set; }
 }

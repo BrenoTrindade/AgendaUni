@@ -9,9 +9,9 @@ namespace AgendaUni.Services
     {
         private readonly IClassScheduleRepository _classScheduleRepository;
         private readonly IClassRepository _classRepository;
-        private readonly NotificationService _notificationService;
+        private readonly INotificationService _notificationService;
 
-        public ClassScheduleService(IClassScheduleRepository classScheduleRepository,IClassRepository classRepository ,NotificationService notificationService)
+        public ClassScheduleService(IClassScheduleRepository classScheduleRepository, IClassRepository classRepository, INotificationService notificationService)
         {
             _classScheduleRepository = classScheduleRepository;
             _classRepository = classRepository;
@@ -36,7 +36,7 @@ namespace AgendaUni.Services
             }
 
             var notificationId = await _notificationService.ScheduleNotificationForClassSchedule(classSchedule, parentClass);
-            classSchedule.NotificationId = notificationId;
+            classSchedule.NotificationId = notificationId >= 0 ? notificationId : null;
 
             await _classScheduleRepository.AddAsync(classSchedule);
 
@@ -48,7 +48,7 @@ namespace AgendaUni.Services
             return await _classScheduleRepository.GetAllAsync();
         }
 
-        public async Task<ClassSchedule> GetClassScheduleByIdAsync(int id)
+        public async Task<ClassSchedule?> GetClassScheduleByIdAsync(int id)
         {
             return await _classScheduleRepository.GetByIdAsync(id);
         }
@@ -71,18 +71,20 @@ namespace AgendaUni.Services
                 return ServiceResult.Failure("Informe o horário da aula.");
 
             var existingSchedule = await _classScheduleRepository.GetByIdAsync(classSchedule.Id);
+            if (existingSchedule == null)
+                return ServiceResult.Failure("Horário não encontrado.");
+
+            var parentClass = await _classRepository.GetByIdAsync(classSchedule.ClassId);
+            if (parentClass == null)
+                return ServiceResult.Failure("A aula associada a este horário não foi encontrada.");
+
             if (existingSchedule?.NotificationId != null)
             {
                 _notificationService.CancelNotification(existingSchedule.NotificationId.Value);
             }
 
-            var parentClass = await _classRepository.GetByIdAsync(classSchedule.ClassId);
-            if (parentClass == null)
-            {
-                return ServiceResult.Failure("A aula associada a este horário não foi encontrada.");
-            }
             var notificationId = await _notificationService.ScheduleNotificationForClassSchedule(classSchedule, parentClass);
-            classSchedule.NotificationId = notificationId;
+            classSchedule.NotificationId = notificationId >= 0 ? notificationId : null;
 
             await _classScheduleRepository.UpdateAsync(classSchedule);
 

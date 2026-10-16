@@ -18,7 +18,7 @@ namespace AgendaUni.Tests
         public ClassServiceTests()
         {
             _mockClassRepository = new Mock<IClassRepository>();
-            _classService = new ClassService(_mockClassRepository.Object);
+            _classService = new ClassService(_mockClassRepository.Object, Mock.Of<INotificationService>());
         }
 
         [Fact]
@@ -134,7 +134,7 @@ namespace AgendaUni.Tests
         {
             // Arrange
             var classId = 99;
-            _mockClassRepository.Setup(repo => repo.GetByIdAsync(classId)).ReturnsAsync((Class)null);
+            _mockClassRepository.Setup(repo => repo.GetByIdAsync(classId)).ReturnsAsync((Class?)null);
 
             // Act
             var result = await _classService.DeleteClassAsync(classId);

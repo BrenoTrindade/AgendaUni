@@ -18,9 +18,9 @@ public class ServiceResult
 
 public class ServiceResult<T> : ServiceResult
 {
-    public T Data { get; }
+    public T? Data { get; }
 
-    private ServiceResult(bool isSuccess, string message, T data): base(isSuccess, message)
+    private ServiceResult(bool isSuccess, string message, T? data): base(isSuccess, message)
     {
         Data = data;
     }
@@ -28,6 +28,6 @@ public class ServiceResult<T> : ServiceResult
     public static ServiceResult<T> Success(T data, string message = "Sucesso.") =>
         new(true, message, data);
 
-    public static ServiceResult<T> Failure(string message) =>
+    public new static ServiceResult<T> Failure(string message) =>
         new(false, message, default);
 }

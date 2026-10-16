@@ -1,0 +1,20 @@
+name: Testes
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  business-logic:
+    name: Regras de negócio
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Executar testes sem workloads MAUI
+        run: dotnet test mobile/AgendaUni.Tests/AgendaUni.Tests.csproj --configuration Release

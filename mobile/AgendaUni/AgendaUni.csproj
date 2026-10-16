@@ -4,7 +4,7 @@
 		<TargetFrameworks>net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
 		<RuntimeIdentifiers Condition="'$(TargetFramework)' == 'net9.0-android'">android-arm;android-arm64</RuntimeIdentifiers>
-		<AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
+		<AndroidEnableProfiledAot Condition="'$(Configuration)' == 'Release'">true</AndroidEnableProfiledAot>
 
 		
 		<OutputType Condition="'$(TargetFramework)' != 'net9.0'">Exe</OutputType>

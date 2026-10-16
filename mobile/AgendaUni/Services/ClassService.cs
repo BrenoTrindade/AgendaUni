@@ -7,10 +7,12 @@ namespace AgendaUni.Services
     public class ClassService
     {
         private readonly IClassRepository _classRepository;
+        private readonly INotificationService _notificationService;
 
-        public ClassService(IClassRepository classRepository)
+        public ClassService(IClassRepository classRepository, INotificationService notificationService)
         {
             _classRepository = classRepository;
+            _notificationService = notificationService;
         }
 
         public async Task<List<Class>> GetAllClassesAsync()
@@ -18,7 +20,7 @@ namespace AgendaUni.Services
             return await _classRepository.GetAllAsync();
         }
 
-        public async Task<Class> GetClassByIdAsync(int id)
+        public async Task<Class?> GetClassByIdAsync(int id)
         {
             return await _classRepository.GetByIdAsync(id);
         }
@@ -54,6 +56,15 @@ namespace AgendaUni.Services
             var classToDelete = await _classRepository.GetByIdAsync(id);
             if (classToDelete == null)
                 return ServiceResult.Failure("Aula não encontrada.");
+
+            foreach (var notification in classToDelete.Events.SelectMany(ev => ev.EventNotifications))
+                _notificationService.CancelNotification(notification.NotificationId);
+
+            foreach (var schedule in classToDelete.Schedules)
+            {
+                if (schedule.NotificationId is int notificationId)
+                    _notificationService.CancelNotification(notificationId);
+            }
 
             await _classRepository.DeleteAsync(id);
 

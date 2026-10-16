@@ -1,4 +1,4 @@
-﻿using AgendaUni.Models;
+using AgendaUni.Models;
 
 namespace AgendaUni.Repositories.Interfaces
 {
@@ -6,7 +6,7 @@ namespace AgendaUni.Repositories.Interfaces
     {
         Task AddAsync(Absence absence);
         Task<IEnumerable<Absence>> GetAllAsync();
-        Task<Absence> GetByIdAsync(int id);
+        Task<Absence?> GetByIdAsync(int id);
         Task UpdateAsync(Absence absence);
         Task DeleteAsync(int id);
         Task<IEnumerable<Absence>> GetAbsencesByClassIdAsync(int classId);

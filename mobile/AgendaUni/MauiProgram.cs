@@ -40,6 +40,7 @@ namespace AgendaUni
 
             builder.Services.AddSingleton<ThemeService>();
             builder.Services.AddScoped<NotificationService>();
+            builder.Services.AddScoped<AgendaUni.Services.INotificationService>(sp => sp.GetRequiredService<NotificationService>());
 
 
             builder.Services.AddTransient<ClassViewModel>();

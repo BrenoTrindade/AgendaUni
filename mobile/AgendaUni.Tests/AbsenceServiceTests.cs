@@ -1,4 +1,4 @@
-﻿using AgendaUni.Models;
+using AgendaUni.Models;
 using AgendaUni.Services;
 using AgendaUni.Repositories.Interfaces;
 using AgendaUni.Common;
@@ -130,7 +130,7 @@ public class AbsenceServiceTests
     {
         // Arrange
         var absenceId = 99;
-        _absenceRepositoryMock.Setup(r => r.GetByIdAsync(absenceId)).ReturnsAsync((Absence)null);
+        _absenceRepositoryMock.Setup(r => r.GetByIdAsync(absenceId)).ReturnsAsync((Absence?)null);
 
         // Act
         var result = await _absenceService.DeleteAbsenceAsync(absenceId);

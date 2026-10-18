@@ -13,9 +13,9 @@ public class Absence
 
     [Required]
     [StringLength(200)]
-    public string AbsenceReason { get; set; }
+    public string AbsenceReason { get; set; } = string.Empty;
 
     public int ClassId { get; set; }
 
-    public virtual Class Class { get; set; }
+    public virtual Class Class { get; set; } = null!;
 }

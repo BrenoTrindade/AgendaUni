@@ -24,7 +24,7 @@ namespace AgendaUni.Repositories
             return await _context.Absences.ToListAsync();
         }
 
-        public async Task<Absence> GetByIdAsync(int id)
+        public async Task<Absence?> GetByIdAsync(int id)
         {
             return await _context.Absences.FindAsync(id);
         }

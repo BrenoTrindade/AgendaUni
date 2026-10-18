@@ -4,7 +4,7 @@ using Plugin.LocalNotification;
 
 namespace AgendaUni.Services
 {
-    public class NotificationService
+    public class NotificationService : INotificationService
     {
         private readonly IClassRepository _classRepository;
         private readonly IClassScheduleRepository _classScheduleRepository;
@@ -33,13 +33,13 @@ namespace AgendaUni.Services
 
             var titleSemana = $"Evento em uma semana: {cl.ClassName}";
             var descSemana = $"Seu evento '{ev.Description}' será na próxima semana, no dia {ev.EventDate:dd/MM}.";
-            var notifyTimeSemana = ev.EventDate.AddDays(-7).AddHours(6);
+            var notifyTimeSemana = ev.EventDate.Date.AddDays(-7).AddHours(6);
             var idSemana = await ScheduleNotification(titleSemana, descSemana, notifyTimeSemana, "event");
             if (idSemana != -1) notificationIds.Add(idSemana);
 
             var titleDia = $"Evento amanhã: {cl.ClassName}";
             var descDia = $"Seu evento '{ev.Description}' é amanhã.";
-            var notifyTimeDia = ev.EventDate.AddDays(-1).AddHours(6);
+            var notifyTimeDia = ev.EventDate.Date.AddDays(-1).AddHours(6);
             var idDia = await ScheduleNotification(titleDia, descDia, notifyTimeDia, "event");
             if (idDia != -1) notificationIds.Add(idDia);
 
@@ -121,26 +121,31 @@ namespace AgendaUni.Services
 
         public async Task RescheduleEventNotifications()
         {
+            await CancelNotificationsByType("event");
             var classes = await _classRepository.GetAllAsync();
             foreach (var cl in classes)
             {
                 var events = await _eventRepository.GetEventsByClassIdAsync(cl.Id);
                 foreach (var ev in events)
                 {
-                    await ScheduleNotificationForEvent(ev, cl);
+                    var notificationIds = await ScheduleNotificationForEvent(ev, cl);
+                    await _eventRepository.UpdateAsync(ev, notificationIds);
                 }
             }
         }
 
         public async Task RescheduleClassScheduleNotifications()
         {
+            await CancelNotificationsByType("class_schedule");
             var classes = await _classRepository.GetAllAsync();
             foreach (var cl in classes)
             {
                 var schedules = await _classScheduleRepository.GetSchedulesByClassIdAsync(cl.Id);
                 foreach (var schedule in schedules)
                 {
-                    await ScheduleNotificationForClassSchedule(schedule, cl);
+                    var notificationId = await ScheduleNotificationForClassSchedule(schedule, cl);
+                    schedule.NotificationId = notificationId >= 0 ? notificationId : null;
+                    await _classScheduleRepository.UpdateAsync(schedule);
                 }
             }
         }

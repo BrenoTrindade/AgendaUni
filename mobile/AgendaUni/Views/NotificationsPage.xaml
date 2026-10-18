@@ -3,19 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:AgendaUni.ViewModels"
              x:Class="AgendaUni.Views.NotificationsPage"
+             x:DataType="viewModels:NotificationsViewModel"
              Title="{Binding Title}">
 
     <VerticalStackLayout Spacing="20" Padding="20">
         <Frame>
             <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
                 <Label Text="Notificações de Eventos" VerticalOptions="Center"/>
-                <Switch IsToggled="{Binding EventNotificationsEnabled, Mode=TwoWay}" HorizontalOptions="End"/>
+                <Switch x:Name="EventSwitch" IsToggled="{Binding EventNotificationsEnabled, Mode=OneWay}"
+                        IsEnabled="{Binding CanChangeNotifications}" Toggled="OnEventToggled" HorizontalOptions="End"/>
             </Grid>
         </Frame>
         <Frame>
             <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
                 <Label Text="Notificações de Aulas" VerticalOptions="Center"/>
-                <Switch IsToggled="{Binding ClassScheduleNotificationsEnabled, Mode=TwoWay}" HorizontalOptions="End"/>
+                <Switch x:Name="ScheduleSwitch" IsToggled="{Binding ClassScheduleNotificationsEnabled, Mode=OneWay}"
+                        IsEnabled="{Binding CanChangeNotifications}" Toggled="OnScheduleToggled" HorizontalOptions="End"/>
             </Grid>
         </Frame>
     </VerticalStackLayout>

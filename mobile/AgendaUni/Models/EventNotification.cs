@@ -12,5 +12,5 @@ public class EventNotification
     [ForeignKey("Event")]
     public int EventId { get; set; }
 
-    public virtual Event Event { get; set; }
+    public virtual Event Event { get; set; } = null!;
 }

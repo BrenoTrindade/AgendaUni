@@ -10,11 +10,16 @@ namespace AgendaUni.Tests
     {
         private readonly Mock<IClassScheduleRepository> _mockClassScheduleRepository;
         private readonly ClassScheduleService _classScheduleService;
+        private readonly Mock<IClassRepository> _mockClassRepository = new();
+        private readonly Mock<INotificationService> _mockNotificationService = new();
 
         public ClassScheduleServiceTests()
         {
             _mockClassScheduleRepository = new Mock<IClassScheduleRepository>();
-            _classScheduleService = new ClassScheduleService(_mockClassScheduleRepository.Object);
+            _mockClassRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(new Class { Id = 1 });
+            _mockClassScheduleRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(new ClassSchedule { Id = 1 });
+            _classScheduleService = new ClassScheduleService(
+                _mockClassScheduleRepository.Object, _mockClassRepository.Object, _mockNotificationService.Object);
         }
 
         [Fact]
@@ -115,7 +120,7 @@ namespace AgendaUni.Tests
         {
             // Arrange
             var scheduleId = 99;
-            _mockClassScheduleRepository.Setup(r => r.GetByIdAsync(scheduleId)).ReturnsAsync((ClassSchedule)null);
+            _mockClassScheduleRepository.Setup(r => r.GetByIdAsync(scheduleId)).ReturnsAsync((ClassSchedule?)null);
 
             // Act
             var result = await _classScheduleService.DeleteClassScheduleAsync(scheduleId);

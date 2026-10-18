@@ -1,87 +1,95 @@
-# 📅 AgendaUni
+# AgendaUni
 
-Organize sua vida acadêmica com praticidade! O AgendaUni é um aplicativo mobile simples e intuitivo que ajuda estudantes a gerenciar provas, faltas, trabalhos e compromissos da faculdade, tudo em um só lugar, mesmo sem internet.
+### Organização acadêmica offline com .NET MAUI
 
-# 🚀 Funcionalidades
+Disciplinas, faltas, horários e avaliações em um aplicativo com armazenamento local e lembretes. Desenvolvido em C# para explorar MVVM, persistência com Entity Framework Core e integração com recursos do dispositivo.
 
-- [x] Cadastro de provas, faltas e trabalhos
+**Projeto concluído · Portfólio · Sem manutenção ativa**
 
-- [x] Gerenciamento de datas importantes
+O desenvolvimento foi encerrado. Esta versão preserva o aplicativo offline como demonstração técnica, sem contas, servidor ou dependência de uma API.
 
-- [x] Funciona offline
+## O aplicativo
 
-- [x] Integração com API
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/fe6fa44f-4530-4dce-ae08-9d2aa6015f2c" width="250" alt="Captura do AgendaUni: apresentação do aplicativo" />
+  <img src="https://github.com/user-attachments/assets/077184c0-71f3-417b-85de-fabaaa09b638" width="250" alt="Captura do AgendaUni: interface mobile" />
+  <img src="https://github.com/user-attachments/assets/9ffa66c5-89d1-4a05-8374-1ce56a1ed4f2" width="250" alt="Captura do AgendaUni: organização acadêmica" />
+</p>
 
-- [ ] Versão web
+*Capturas da versão original. O fluxo da demonstração está no [roteiro de apresentação](docs/DEMONSTRACAO.md).*
 
-# 📷 Screenshots
-<img width="381" height="552" alt="image" src="https://github.com/user-attachments/assets/fe6fa44f-4530-4dce-ae08-9d2aa6015f2c" /> <br>
+- **Disciplinas:** cadastro, edição e definição do limite de faltas.
+- **Faltas:** registro por disciplina, com data e motivo.
+- **Horários:** organização das aulas por dia da semana.
+- **Eventos:** provas, trabalhos e outros compromissos acadêmicos.
+- **Calendário:** visualização de aulas, eventos e faltas, com filtros.
+- **Lembretes locais:** notificações de aulas e eventos, conforme as permissões do dispositivo.
+- **Tema claro e escuro:** preferência salva no aparelho.
 
-<img width="384" height="389" alt="image" src="https://github.com/user-attachments/assets/4e52e278-485f-433b-8b5a-a181979b9b7c" /> <br>
+Os dados ficam no SQLite do dispositivo. Não há sincronização entre aparelhos, recuperação de conta ou backup em nuvem.
 
-<img width="387" height="786" alt="image" src="https://github.com/user-attachments/assets/077184c0-71f3-417b-85de-fabaaa09b638" /> <br>
+## Decisões técnicas
 
-<img width="382" height="312" alt="image" src="https://github.com/user-attachments/assets/d3d9de06-d530-4c7a-be83-3ccf4b61e1c8" /> <br>
+| Escolha | Motivo |
+| --- | --- |
+| .NET MAUI + XAML | Construção da interface mobile em C# com acesso a recursos nativos. |
+| MVVM | Separação entre telas, estado da interface e ações do usuário. |
+| EF Core + SQLite | Persistência local e funcionamento offline, sem infraestrutura externa. |
+| Serviços e repositórios | Validação dos dados separada das consultas ao banco. |
+| Injeção de dependências | Composição das telas e substituição das dependências nos testes. |
+| xUnit + Moq | Verificação das regras e do cancelamento de lembretes sem emulador. |
 
-<img width="385" height="436" alt="image" src="https://github.com/user-attachments/assets/9ffa66c5-89d1-4a05-8374-1ce56a1ed4f2" /> <br>
+```text
+Views (XAML) → ViewModels → Services → Repositories → SQLite
+                               ↓
+                    INotificationService
+                               ↓
+                    Notificações do aparelho
+```
 
-<img width="382" height="511" alt="image" src="https://github.com/user-attachments/assets/fc6b534c-79a0-4332-920e-818acabbeb44" /> <br>
+Detalhes e limites da implementação: [arquitetura](docs/ARQUITETURA.md).
 
-<img width="385" height="432" alt="image" src="https://github.com/user-attachments/assets/4c1ed0cf-6a6d-4050-99d7-dce9fe08633c" />
+## Executar os testes
 
+Requer apenas o **SDK .NET 9**. O arquivo `global.json` seleciona essa linha do SDK.
 
-# 🔧 Instalação
-### Pré-requisitos
-
-.NET MAUI instalado
-
-Visual Studio 2022 (ou superior) configurado com suporte a .NET MAUI
-
-Emulador Android ou dispositivo físico conectado
-
-## Rodando o projeto
-
-### Clone o repositório
+```powershell
 git clone https://github.com/BrenoTrindade/AgendaUni.git
-
-### Acesse a pasta do projeto
 cd AgendaUni
+dotnet test mobile/AgendaUni.Tests/AgendaUni.Tests.csproj --configuration Release
+```
 
-### Restaure as dependências
-dotnet restore
+Os testes compilam os arquivos reais de modelos, contratos e serviços do aplicativo por referência de código-fonte. Não exigem workloads MAUI, banco instalado, emulador ou servidor. A execução também está configurada no GitHub Actions.
 
-### Acesse a pasta da API e crie a migração inicial
+## Executar o aplicativo
 
-dotnet ef migrations add InitialCreate
+O Android é o alvo da demonstração. Use Visual Studio com suporte a .NET MAUI, SDK .NET 9, JDK/Android SDK compatíveis e um emulador ou aparelho com depuração USB.
 
-### Aplicar a migração ao banco de dados:
-dotnet ef database update
+1. Abra `AgendaUni.sln` no Visual Studio.
+2. Selecione `AgendaUni` como projeto de inicialização.
+3. Selecione o destino Android e o emulador ou aparelho.
+4. Execute em **Debug**.
 
-### Execute no emulador ou dispositivo
-dotnet build
+Pelo terminal, em um ambiente Android já configurado:
 
-dotnet run
+```powershell
+dotnet build mobile/AgendaUni/AgendaUni.csproj -f net9.0-android -p:TargetFrameworks=net9.0-android -t:Run
+```
 
-# 📦 Publicação
+O banco `absence.db` é criado e migrado automaticamente no primeiro início. Não é necessário instalar SQL Server nem executar comandos de migração manualmente. Ao desinstalar ou limpar os dados do aplicativo, os registros locais são perdidos.
 
-O AgendaUni está atualmente em **fase de teste interno** na Google Play Store. Apenas testadores convidados têm acesso ao aplicativo neste momento.  
+Não há APK ou vídeo de demonstração publicado nesta versão. Os passos para uma apresentação com dados fictícios estão no [roteiro](docs/DEMONSTRACAO.md).
 
-Se você quiser participar dos testes, entre em contato com o desenvolvedor para receber o convite.  
-Em breve, o aplicativo estará disponível para todos os usuários na versão oficial.
+## Escopo encerrado
 
-# 🛠️ Tecnologias utilizadas
+- A API experimental, o cliente Blazor e o Docker foram retirados desta versão para manter o foco no aplicativo offline. O histórico anterior à revisão de portfólio preserva esses experimentos.
+- Não há previsão de lançamento comercial ou novas funcionalidades.
+- Notificações dependem das permissões e das políticas de bateria do sistema. Testes unitários não substituem a verificação em um aparelho.
+- Os alvos iOS, Mac Catalyst e Windows presentes no projeto são parte da configuração original; não são apresentados como versões homologadas.
+- O projeto mantém a stack .NET 9 da implementação original; não há compromisso de atualização de dependências.
 
-.NET MAUI
+## Autor e licença
 
-BLAZOR
+Desenvolvido por [Breno Trindade](https://github.com/BrenoTrindade).
 
-SQLSERVER
-
-C#
-
-SQLite (armazenamento local offline)
-
-XUNIT
-
-# 📜 Licença
-Este projeto é de código aberto sob a licença MIT License para fins de portfólio. Para uso comercial ou distribuição, entre em contato com o desenvolvedor.
+Código disponibilizado sob a [licença MIT](LICENSE). Dependências e recursos de terceiros mantêm suas próprias licenças.

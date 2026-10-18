@@ -11,40 +11,54 @@ public class NotificationsViewModel : BaseViewModel
     public bool EventNotificationsEnabled
     {
         get => _eventNotificationsEnabled;
-        set
-        {
-            if (SetProperty(ref _eventNotificationsEnabled, value))
-            {
-                Preferences.Set("IsEventNotificationEnabled", value);
-                if (value)
-                {
-                    _notificationService.RescheduleEventNotifications();
-                }
-                else
-                {
-                    _notificationService.CancelNotificationsByType("event");
-                }
-            }
-        }
+        private set => SetProperty(ref _eventNotificationsEnabled, value);
     }
 
     public bool ClassScheduleNotificationsEnabled
     {
         get => _classScheduleNotificationsEnabled;
-        set
+        private set => SetProperty(ref _classScheduleNotificationsEnabled, value);
+    }
+
+    public bool CanChangeNotifications => !IsBusy;
+
+    public async Task SetEventNotificationsEnabledAsync(bool enabled)
+    {
+        if (IsBusy || enabled == EventNotificationsEnabled) return;
+        await ChangePreferenceAsync("IsEventNotificationEnabled", enabled,
+            enabled ? _notificationService.RescheduleEventNotifications
+                : () => _notificationService.CancelNotificationsByType("event"));
+        EventNotificationsEnabled = enabled;
+    }
+
+    public async Task SetClassScheduleNotificationsEnabledAsync(bool enabled)
+    {
+        if (IsBusy || enabled == ClassScheduleNotificationsEnabled) return;
+        await ChangePreferenceAsync("IsClassScheduleNotificationEnabled", enabled,
+            enabled ? _notificationService.RescheduleClassScheduleNotifications
+                : () => _notificationService.CancelNotificationsByType("class_schedule"));
+        ClassScheduleNotificationsEnabled = enabled;
+    }
+
+    private async Task ChangePreferenceAsync(string key, bool enabled, Func<Task> apply)
+    {
+        var previous = Preferences.Get(key, true);
+        IsBusy = true;
+        OnPropertyChanged(nameof(CanChangeNotifications));
+        try
         {
-            if (SetProperty(ref _classScheduleNotificationsEnabled, value))
-            {
-                Preferences.Set("IsClassScheduleNotificationEnabled", value);
-                if (value)
-                {
-                    _notificationService.RescheduleClassScheduleNotifications();
-                }
-                else
-                {
-                    _notificationService.CancelNotificationsByType("class_schedule");
-                }
-            }
+            Preferences.Set(key, enabled);
+            await apply();
+        }
+        catch
+        {
+            Preferences.Set(key, previous);
+            throw;
+        }
+        finally
+        {
+            IsBusy = false;
+            OnPropertyChanged(nameof(CanChangeNotifications));
         }
     }
 

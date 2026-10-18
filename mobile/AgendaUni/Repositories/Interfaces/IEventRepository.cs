@@ -6,7 +6,7 @@ namespace AgendaUni.Repositories.Interfaces
     {
         Task AddAsync(Event ev, IEnumerable<int> notificationIds);
         Task<IEnumerable<Event>> GetAllAsync();
-        Task<Event> GetByIdAsync(int id);
+        Task<Event?> GetByIdAsync(int id);
         Task UpdateAsync(Event ev, IEnumerable<int> notificationIds);
         Task DeleteAsync(int id);
         Task<IEnumerable<Event>> GetEventsByClassIdAsync(int classId);

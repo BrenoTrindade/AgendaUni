@@ -31,7 +31,7 @@ namespace AgendaUni.Services
             return await _absenceRepository.GetAllAsync();
         }
 
-        public async Task<Absence> GetAbsenceByIdAsync(int id)
+        public async Task<Absence?> GetAbsenceByIdAsync(int id)
         {
             return await _absenceRepository.GetByIdAsync(id);
         }

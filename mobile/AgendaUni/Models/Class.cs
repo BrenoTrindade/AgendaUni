@@ -8,7 +8,7 @@ public class Class
 
     [Required]
     [StringLength(100)]
-    public string ClassName { get; set; }
+    public string ClassName { get; set; } = string.Empty;
 
     [Required]
     public int MaximumAbsences { get; set; }

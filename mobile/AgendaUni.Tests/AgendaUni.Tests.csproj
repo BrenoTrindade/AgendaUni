@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.10" />
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
@@ -16,7 +17,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AgendaUni\AgendaUni.csproj" />
+    <!-- Compile the production business logic directly, without MAUI workloads or an emulator. -->
+    <Compile Include="../AgendaUni/Models/*.cs" Link="App/Models/%(Filename)%(Extension)" />
+    <Compile Include="../AgendaUni/Repositories/Interfaces/*.cs" Link="App/Repositories/%(Filename)%(Extension)" />
+    <Compile Include="../AgendaUni/Common/ServiceResult.cs" Link="App/Common/ServiceResult.cs" />
+    <Compile Include="../AgendaUni/Services/AbsenceService.cs" Link="App/Services/AbsenceService.cs" />
+    <Compile Include="../AgendaUni/Services/ClassService.cs" Link="App/Services/ClassService.cs" />
+    <Compile Include="../AgendaUni/Services/ClassScheduleService.cs" Link="App/Services/ClassScheduleService.cs" />
+    <Compile Include="../AgendaUni/Services/EventService.cs" Link="App/Services/EventService.cs" />
+    <Compile Include="../AgendaUni/Services/INotificationService.cs" Link="App/Services/INotificationService.cs" />
+    <Compile Include="../AgendaUni/Data/AppDbContext.cs" Link="App/Data/AppDbContext.cs" />
+    <Compile Include="../AgendaUni/Migrations/*.cs" Link="App/Migrations/%(Filename)%(Extension)" />
+    <Compile Include="../AgendaUni/Repositories/*.cs" Link="App/Repositories/%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

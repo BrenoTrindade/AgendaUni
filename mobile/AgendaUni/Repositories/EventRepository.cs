@@ -33,7 +33,7 @@ namespace AgendaUni.Repositories
             return await _context.Events.Include(e => e.EventNotifications).ToListAsync();
         }
 
-        public async Task<Event> GetByIdAsync(int id)
+        public async Task<Event?> GetByIdAsync(int id)
         {
             return await _context.Events.Include(e => e.EventNotifications).FirstOrDefaultAsync(e => e.Id == id);
         }

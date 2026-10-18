@@ -22,9 +22,13 @@ namespace AgendaUni.Repositories
                                     .ToListAsync();
         }
 
-        public async Task<Class> GetByIdAsync(int id)
+        public async Task<Class?> GetByIdAsync(int id)
         {
-            return await _context.Classes.FindAsync(id);
+            return await _context.Classes
+                .Include(c => c.Absences)
+                .Include(c => c.Schedules)
+                .Include(c => c.Events).ThenInclude(ev => ev.EventNotifications)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Class> AddAsync(Class classObj)

@@ -11,11 +11,11 @@ public class Event
 
     [Required]
     [StringLength(200)]
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     public int ClassId { get; set; }
 
-    public virtual Class Class { get; set; }
+    public virtual Class Class { get; set; } = null!;
 
     public virtual ICollection<EventNotification> EventNotifications { get; set; } = new List<EventNotification>();
 }

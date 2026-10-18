@@ -24,7 +24,7 @@ namespace AgendaUni.Repositories
             return await _context.ClassSchedules.ToListAsync();
         }
 
-        public async Task<ClassSchedule> GetByIdAsync(int id)
+        public async Task<ClassSchedule?> GetByIdAsync(int id)
         {
             return await _context.ClassSchedules.FindAsync(id);
         }

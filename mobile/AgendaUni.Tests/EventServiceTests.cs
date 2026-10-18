@@ -82,7 +82,7 @@ namespace AgendaUni.Tests
         {
             // Arrange
             var eventToUpdate = new Event { Id = 1, ClassId = 1, Description = "Updated Description" };
-            var existingEvent = new Event { Id = 1, ClassId = 1, Description = "Old Description", NotificationIds = new List<EventNotification> { new EventNotification { NotificationId = 1 } } };
+            var existingEvent = new Event { Id = 1, ClassId = 1, Description = "Old Description", EventNotifications = new List<EventNotification> { new EventNotification { NotificationId = 1 } } };
             var classToReturn = new Class { Id = 1, ClassName = "Test Class" };
             var notificationIds = new List<int> { 2, 3, 4 };
 
@@ -121,7 +121,7 @@ namespace AgendaUni.Tests
         {
             // Arrange
             var eventId = 1;
-            var existingEvent = new Event { Id = eventId, NotificationIds = new List<EventNotification> { new EventNotification { NotificationId = 1 } } };
+            var existingEvent = new Event { Id = eventId, EventNotifications = new List<EventNotification> { new EventNotification { NotificationId = 1 } } };
             _mockEventRepository.Setup(r => r.GetByIdAsync(eventId)).ReturnsAsync(existingEvent);
 
             // Act
@@ -139,7 +139,7 @@ namespace AgendaUni.Tests
         {
             // Arrange
             var eventId = 99;
-            _mockEventRepository.Setup(r => r.GetByIdAsync(eventId)).ReturnsAsync((Event)null);
+            _mockEventRepository.Setup(r => r.GetByIdAsync(eventId)).ReturnsAsync((Event?)null);
 
             // Act
             var result = await _eventService.DeleteEventAsync(eventId);
